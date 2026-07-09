@@ -8,6 +8,7 @@ from src.agent.tool_registry import ToolRegistry, Tool
 from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
 from src.tools.exam_tools import check_essay, ESSAY_CHECK_TOOL
 from src.tools.translation_eval import evaluate_translation, TRANSLATION_EVAL_TOOL
+from src.tools.answer_lookup import format_exam_answers, ANSWER_LOOKUP_TOOL
 
 
 def build_agent() -> ReActAgent:
@@ -33,6 +34,13 @@ def build_agent() -> ReActAgent:
         description=TRANSLATION_EVAL_TOOL["description"],
         fn=evaluate_translation,
         parameters=TRANSLATION_EVAL_TOOL["parameters"]
+    ))
+
+    registry.register(Tool(
+        name=ANSWER_LOOKUP_TOOL["name"],
+        description=ANSWER_LOOKUP_TOOL["description"],
+        fn=format_exam_answers,
+        parameters=ANSWER_LOOKUP_TOOL["parameters"]
     ))
     
     return ReActAgent(registry=registry)

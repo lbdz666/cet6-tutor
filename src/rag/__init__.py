@@ -176,10 +176,30 @@ class CETRag:
             return f"❌ 索引库中没有 \"{word}\""
         
         lines = [f"✅ \"{word}\" 出现在 {len(results)} 处:"]
+        
+        # 跟踪哪些考试有答案可查
+        exam_with_answers = set()
+        try:
+            from src.tools.answer_lookup import get_exam_answers
+            for r in results[:15]:
+                exam = r.get("exam", "")
+                if exam and get_exam_answers(exam):
+                    exam_with_answers.add(exam)
+        except ImportError:
+            pass
+        
         for i, r in enumerate(results[:15], 1):
             highlighted = self.highlight(r["sentence"][:200], word)
-            lines.append(f"\n  [{i}] [{r['exam']}]")
+            exam = r.get("exam", "")
+            lines.append(f"\n  [{i}] [{exam}]")
             lines.append(f"     {highlighted}")
+        
         if len(results) > 15:
             lines.append(f"\n  ... 还有 {len(results) - 15} 处")
+        
+        if exam_with_answers:
+            lines.append(f"\n📌 以上句子出自有答案的试卷，可查询对应阅读答案：")
+            for e in sorted(exam_with_answers):
+                lines.append(f"   • {e}")
+        
         return "\n".join(lines)

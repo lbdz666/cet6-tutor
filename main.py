@@ -48,6 +48,7 @@ def _cli_mode():
     from src.agent.tool_registry import ToolRegistry, Tool
     from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
     from src.tools.exam_tools import check_essay, ESSAY_CHECK_TOOL
+    from src.tools.answer_lookup import format_exam_answers, ANSWER_LOOKUP_TOOL
     
     registry = ToolRegistry()
     registry.register(Tool(
@@ -61,6 +62,12 @@ def _cli_mode():
         description=ESSAY_CHECK_TOOL["description"],
         fn=check_essay,
         parameters=ESSAY_CHECK_TOOL["parameters"]
+    ))
+    registry.register(Tool(
+        name=ANSWER_LOOKUP_TOOL["name"],
+        description=ANSWER_LOOKUP_TOOL["description"],
+        fn=format_exam_answers,
+        parameters=ANSWER_LOOKUP_TOOL["parameters"]
     ))
     
     agent = ReActAgent(registry=registry)
@@ -90,6 +97,7 @@ def _single_query(query: str):
     from src.agent.tool_registry import ToolRegistry, Tool
     from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
     from src.tools.exam_tools import check_essay, ESSAY_CHECK_TOOL
+    from src.tools.answer_lookup import format_exam_answers, ANSWER_LOOKUP_TOOL
     
     registry = ToolRegistry()
     registry.register(Tool(
@@ -97,6 +105,12 @@ def _single_query(query: str):
         description=WORD_LOOKUP_TOOL["description"],
         fn=word_lookup,
         parameters=WORD_LOOKUP_TOOL["parameters"]
+    ))
+    registry.register(Tool(
+        name=ANSWER_LOOKUP_TOOL["name"],
+        description=ANSWER_LOOKUP_TOOL["description"],
+        fn=format_exam_answers,
+        parameters=ANSWER_LOOKUP_TOOL["parameters"]
     ))
     registry.register(Tool(
         name=ESSAY_CHECK_TOOL["name"],
