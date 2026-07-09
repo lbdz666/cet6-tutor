@@ -2,6 +2,7 @@
 Gradio Web 界面 — 四六级真题词典
 """
 import gradio as gr
+import os
 from src.agent.core import ReActAgent
 from src.agent.tool_registry import ToolRegistry, Tool
 from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
@@ -163,7 +164,8 @@ def create_ui():
     return demo
 
 
-def launch(share: bool = False, port: int = 7860):
+def launch(share: bool = False, port: int = 0):
     """启动 Web 界面"""
     demo = create_ui()
-    demo.launch(share=share, server_port=port, server_name="0.0.0.0")
+    actual_port = port or int(os.environ.get("PORT", 7860))
+    demo.launch(share=share, server_port=actual_port, server_name="0.0.0.0")
