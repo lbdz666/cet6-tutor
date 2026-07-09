@@ -1,0 +1,14 @@
+# 核心
+requests>=2.31
+openai>=1.0
+
+# RAG
+PyMuPDF>=1.25
+nltk>=3.8
+
+# 界面
+gradio>=6.0,<7.0
+
+# 工具
+python-dotenv>=1.0
+rich>=13.0
