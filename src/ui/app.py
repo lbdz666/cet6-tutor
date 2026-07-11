@@ -86,7 +86,7 @@ def create_ui():
         return format_exam_answers(exam.strip(), section)
 
     # ── 构建界面 ─────────────────────────────
-    with gr.Blocks(title="四六级真题词典", theme=gr.themes.Soft()) as demo:
+    with gr.Blocks(title="四六级真题词典") as demo:
         gr.Markdown("""
         # 📖 四六级真题词典
         <div class="tagline">收录 2016~2025 年四六级真题 · 查单词 · 改作文 · 对答案</div>
@@ -216,4 +216,4 @@ def create_ui():
 def launch(share: bool = False, port: int = 0):
     demo = create_ui()
     actual_port = port or int(os.environ.get("PORT", 7860))
-    demo.launch(share=share, server_port=actual_port, server_name="0.0.0.0", css=CUSTOM_CSS)
+    demo.launch(share=share, server_port=actual_port, server_name="0.0.0.0", css=CUSTOM_CSS, theme=gr.themes.Soft())
