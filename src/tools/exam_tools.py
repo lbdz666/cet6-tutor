@@ -143,7 +143,8 @@ def check_essay(essay: str, level: str = "cet6") -> str:
         grammar_issues.append(msg)
         return count
 
-    # ── 1. 主谓一致 ──
+    # ── 1. 主谓一致（含代词和名词主语）──
+    # 1a. 代词 + be/have 不匹配
     sv = (
         re.findall(r'\b(we|you|they)\s+is\b', essay, re.I) +
         re.findall(r'\b(we|you|they)\s+was\b', essay, re.I) +
@@ -154,14 +155,39 @@ def check_essay(essay: str, level: str = "cet6") -> str:
         re.findall(r'\bI\s+(is|are|was)\b', essay, re.I) +
         re.findall(r'\b(my|your|his|her|our|their)\s+\w+\s+are\b', essay, re.I)
     )
-    if sv:
-        grammar_error_count += add_grammar_issue(f"⚠️ 主谓不一致 {len(sv)} 处（如：'{sv[0][0]}...'）", len(sv))
+    # 1b. he/she/it + 动词缺-s（第三人称单数现在时，允许中间有副词）
+    he_she_it_base = set()
+    for m in re.finditer(r'\b(he|she|it)\s+(?:\w+\s+)?(develop|make|take|play|work|live|study|focus|come|go|do|have|say|know|think|believe|cause|bring|lead|create|form|produce|provide|show|use|need|want|keep|affect|reflect|express|describe|explain|include|involve|become|seem|appear|remain|continue|exist|happen|occur|follow|change|grow|benefit|depend|rely|contain|offer|support|accept|reject|consider|examine|perform|present|introduce|promote|improve|reduce|increase|limit|control|manage|handle|prepare|discuss|forget|remember|understand|agree|argue|claim|state|report|announce|note|observe|point|prove|demonstrate|illustrate|tell|ask|answer|respond|write|read|listen|hear|see|watch|notice|call|try|build|destroy|harm|help|pretend|talk|speak|tell|ask|eat|drink|sleep|walk|run|sit|stand|lie|rise|raise|spend|waste|save|earn|win|achieve|complete|finish|protect|defend|maintain|spread|send|share|gain|lose|cost|worth|lack|form|start|end|stop)\b', essay, re.I):
+        he_she_it_base.add(m.group())
+    correct = set()
+    for m in re.finditer(r'\b(he|she|it)\s+(?:to|not|also|still|never|always|often|usually|sometimes|just|even|already|really|actually|probably)\s+\w+\b', essay, re.I):
+        correct.add(m.group())
+    he_she_it_verb = list(he_she_it_base - correct)
+    # 1c. this/that + 动词缺-s（允许中间有副词）
+    this_that_base = set()
+    for m in re.finditer(r'\b(this|that)\s+(?:\w+\s+)?(develop|make|take|play|work|live|study|focus|come|go|do|have|say|know|think|believe|cause|bring|lead|create|form|produce|provide|show|use|need|want|keep|affect|reflect|express|describe|explain|include|involve|become|seem|appear|remain|continue|exist|happen|occur|follow|change|grow|benefit|depend|rely|contain|offer|support|accept|reject|consider|examine|perform|present|introduce|promote|improve|reduce|increase|limit|control|manage|handle|prepare|discuss|forget|remember|understand|agree|argue|claim|state|report|note|prove|demonstrate|illustrate|tell|ask|answer|respond|write|read|listen|hear|see|watch|notice|call|try|build|destroy|harm|help|talk|eat|sleep|walk|run|spend|save|earn|win|achieve|complete|finish|protect|maintain|spread|share|gain|lose|cost|lack|form|start|end|stop)\b', essay, re.I):
+        this_that_base.add(m.group())
+    this_that_correct = set()
+    for m in re.finditer(r'\b(this|that)\s+(?:is|was|has|does|seems|appears|becomes|remains|matters|means|includes|to|not|also|still|never|always|often|usually|sometimes|just|even|already|really)\s+\w+\b', essay, re.I):
+        this_that_correct.add(m.group())
+    this_that_verb = list(this_that_base - this_that_correct)
+    # 1d. 单数名词/不可数名词 + 动词缺-s（technology develop, situation continue，允许中间有副词）
+    sing_noun_base = set()
+    for m in re.finditer(r'\b(technology|government|education|environment|society|economy|industry|population|health|science|nature|culture|knowledge|information|pollution|poverty|inequality|progress|development|relationship|friendship|leadership|management|agreement|committee|team|group|family|class|school|company|organization|institution|department|system|process|method|approach|strategy|policy|principle|theory|concept|idea|opinion|viewpoint|attitude|behavior|habit|tradition|custom|lifestyle|situation|condition|circumstance|problem|issue|question|matter|topic|subject|field|area|aspect|factor|element|component|part|section|chapter|stage|phase|period|era|age|century|decade|year|month|week|day|hour|minute)(?:\s+\w+)?\s+(develop|make|take|play|work|live|study|focus|come|go|do|have|say|know|think|believe|cause|bring|lead|create|form|produce|provide|show|use|need|want|keep|affect|reflect|express|describe|explain|include|involve|become|seem|appear|remain|continue|exist|happen|occur|follow|change|grow|benefit|depend|rely|contain|offer|support|accept|reject|consider|examine|perform|present|introduce|promote|improve|reduce|increase|limit|control|manage|handle|prepare|discuss|forget|remember|understand|agree|argue|claim|state|report|note|prove|demonstrate|tell|ask|answer|respond|write|read|listen|hear|see|watch|notice|call|try|build|destroy|harm|help|talk|speak|eat|sleep|walk|run|spend|save|earn|win|achieve|complete|finish|protect|maintain|spread|share|gain|lose|cost|lack|form|start|end|stop)\b', essay, re.I):
+        sing_noun_base.add(m.group())
+    sing_noun_verb = list(sing_noun_base)
+    all_sv = sv + he_she_it_verb + this_that_verb + sing_noun_verb
+    if all_sv:
+        count = len(set(m[0] if isinstance(m, tuple) else m[0] for m in all_sv))
+        grammar_error_count += add_grammar_issue(f"⚠️ 主谓不一致 {len(all_sv)} 处（第三人称单数主语后动词应加 -s/-es）", len(all_sv))
 
-    # ── 2. 情态动词错误 ──
+    # ── 2. 情态动词错误（含不规则过去式）──
     modal = (
         re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+\w+ed\b', essay, re.I) +
         re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+\w+ing\b', essay, re.I) +
-        re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+to\s+\w+\b', essay, re.I)
+        re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+to\s+\w+\b', essay, re.I) +
+        # 不规则过去式：may lost, will became, would went, can took, should gave
+        re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+(lost|became|went|came|took|gave|got|found|knew|thought|brought|left|felt|kept|began|built|sold|told|meant|paid|sent|set|ran|saw|taught|wrote|led|held|grew|drew|drove|spoke|stood|won|stole|threw|woke|wore|understood|showed|forgot|froze|chose|hid|bit|broke|spoke|stole|swam|rang|sang|sank|shrank|sprang|stank|swore|tore|wore|withdrew|forbade|forgave|forsook|mistook|overtook|retook|shook|slew|slid|slung|slunk|smote|sneaked|sowed|sped|spelled|spelt|spilled|spilt|spun|spit|split|spread|sprang|sprouted|stank|stole|stung|stank|strode|struck|strung|strove|swore|swept|swelled|swore|swum|swung)\b', essay, re.I)
     )
     if modal:
         grammar_error_count += add_grammar_issue(f"⚠️ 情态动词错误 {len(modal)} 处（情态动词后应跟动词原形）", len(modal))
@@ -309,13 +335,28 @@ def check_essay(essay: str, level: str = "cet6") -> str:
     if cap_errors:
         grammar_error_count += add_grammar_issue(f"⚠️ 句首字母未大写（{cap_errors} 处）", cap_errors)
 
+    # ── 25. "been + 动词原形/过去式"（应为 been + -ing/过去分词）──
+    been_wrong = re.findall(r"\bbeen\s+(?:\w+[s]|\w+ed|developed|wrote|took|gave|made|went|came|saw|knew|thought|brought|left|felt|kept|built|told|meant|paid|sent|ran|taught|wrote|led|held|grew|lost|drew|drove|spoke|stood|won|stole|threw|woke|wore|understood|showed|forgot|chose|broke|spoke|froze|hid|bit|swore|tore|withdrew|forgave|mistook|shook|slew|slid|sprang|stank|stole|stung|struck|strove|swam|rang|sang|sank|shrunk)\b", essay, re.I)
+    if been_wrong:
+        grammar_error_count += add_grammar_issue(f"⚠️ 'been' 后动词形式错误（been 后应跟 -ing 或过去分词，如 'been appearing'）", len(been_wrong))
+
+    # ── 26. 介词后应跟动名词（instead of talk → instead of talking）──
+    prep_verb = re.findall(r"\b(instead of|without)\s+(develop|make|take|play|work|live|study|focus|come|go|do|have|say|know|think|believe|cause|bring|lead|create|form|produce|provide|show|use|need|want|keep|affect|reflect|express|describe|explain|include|involve|become|seem|appear|remain|continue|exist|happen|occur|follow|change|grow|benefit|depend|rely|contain|offer|support|accept|reject|consider|examine|perform|present|introduce|promote|improve|reduce|increase|limit|control|manage|handle|prepare|discuss|forget|remember|understand|agree|argue|claim|state|report|observe|prove|demonstrate|illustrate|tell|ask|answer|respond|write|read|listen|hear|see|watch|notice|call|try|build|destroy|harm|help|pretend|waste|spend|save|earn|win|achieve|complete|finish|protect|defend|maintain|talk|speak|share|spread|eat|sleep|walk|run|communicate|interact|connect|relate|cooperate|collaborate)\b", essay, re.I)
+    if prep_verb:
+        grammar_error_count += add_grammar_issue(f"⚠️ 介词后应跟动名词（-ing形式）{len(prep_verb)} 处（如 'instead of talking' 不是 'instead of talk'）", len(prep_verb))
+
+    # ── 27. "ability of + 动词" → "ability to + 动词" ──
+    ability_of = re.findall(r"\bability\s+of\s+\w+\b", essay, re.I)
+    if ability_of:
+        grammar_error_count += add_grammar_issue("⚠️ 'ability of + 动词' 用法错误，应为 'ability to + 动词'", len(ability_of))
+
     # ── 语法扣分 ──
     # 语法扣分：每个语法错误扣0.8分，上限7分
     grammar_deduction = min(grammar_error_count * 0.8, 7.0)
     deduction += grammar_deduction
 
     if grammar_issues:
-        for g in grammar_issues[:6]:
+        for g in grammar_issues[:10]:
             warnings.append(g)
     else:
         suggestions.append("✅ 语法基本正确，无明显错误")
