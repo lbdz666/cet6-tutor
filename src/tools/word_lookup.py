@@ -1,6 +1,7 @@
 """
 单词查询工具 — 在真题中查找单词
 """
+import json
 
 from src.rag import CETRag
 
@@ -19,20 +20,44 @@ def get_rag() -> CETRag:
 
 def word_lookup(word: str) -> str:
     """
-    在四六级真题中查找单词，返回该词出现的真题句子和考试信息。
-    
+    在四六级真题中查找单词，返回结构化 JSON 供 LLM 渲染为学习卡片。
+
     参数:
         word: 要查询的单词（如 "abandon"）
-    
+
     返回:
-        包含该词的真题句子列表，标注出自哪年哪套
+        JSON 格式的结构化数据，包含单词在真题中的用法信息
     """
     rag = get_rag()
     if not rag:
-        return "RAG 索引未加载，请先运行 cet-rag-builder/build_rag.py 构建索引"
-    
+        return json.dumps({"error": "RAG 索引未加载"}, ensure_ascii=False)
+
     results = rag.query(word)
-    return rag.format_result(results, word)
+    stats = rag.stats(word)
+
+    # 提取前6个有代表性的句子
+    sentences = []
+    seen_exams = set()
+    for r in results:
+        exam = r.get("exam", "")
+        # 尽量选不同出处
+        if exam and exam not in seen_exams:
+            seen_exams.add(exam)
+        sentences.append({
+            "text": r["sentence"][:300],
+            "exam": exam,
+            "year": r.get("year", "")
+        })
+        if len(sentences) >= 6:
+            break
+
+    return json.dumps({
+        "word": word,
+        "total": len(results),
+        "sentences": sentences,
+        "by_year": stats.get("by_year", {}),
+        "by_exam": stats.get("by_exam", {})
+    }, ensure_ascii=False)
 
 
 # ── 工具注册信息 ──────────────────────────

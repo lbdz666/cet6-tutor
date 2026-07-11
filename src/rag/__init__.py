@@ -44,7 +44,10 @@ class CETRag:
         path = index_path or RAG_INDEX_PATH
         if not path.exists():
             # 尝试从 sentences.json 重建索引
+            # 优先查找与 path 同目录的，其次项目 data/ 目录
             sent_path = path.parent / "sentences.json"
+            if not sent_path.exists():
+                sent_path = _PROJECT_DATA.parent / "sentences.json"
             if sent_path.exists():
                 print("🔄 正在重建倒排索引...(首次部署需要约30秒)")
                 self._build_index(sent_path, path)
