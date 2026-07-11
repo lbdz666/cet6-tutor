@@ -51,9 +51,15 @@ def check_essay(essay: str, level: str = "cet6") -> str:
     deduction = 0.0
 
     # ── 1. 字数检查 ─────────────────────────
+    shortfall = limits["min"] - word_count
     if word_count < limits["min"]:
-        warnings.append(f"⚠️ 字数不足：{limits['label']}要求 {limits['min']}-{limits['max']} 词，当前仅 {word_count} 词，建议写到 {limits['ideal']} 词左右")
-        deduction += 2
+        if shortfall <= 10:
+            # 接近达标，轻微扣分
+            warnings.append(f"⚠️ 字数略少：{limits['label']}要求 {limits['min']}-{limits['max']} 词，当前 {word_count} 词，建议写到 {limits['ideal']} 词左右")
+            deduction += 0.5
+        else:
+            warnings.append(f"⚠️ 字数不足：{limits['label']}要求 {limits['min']}-{limits['max']} 词，当前仅 {word_count} 词，建议写到 {limits['ideal']} 词左右")
+            deduction += 2
     elif word_count > limits["max"]:
         warnings.append(f"⚠️ 字数超标：{limits['label']}要求 {limits['min']}-{limits['max']} 词，当前 {word_count} 词，超了 {word_count - limits['max']} 词")
         deduction += 1
@@ -126,28 +132,107 @@ def check_essay(essay: str, level: str = "cet6") -> str:
         deduction += 1
         suggestions.append("💡 尝试用更自然的英语表达替代模板化句式")
 
-    # 3e. 语法初步分析
+    # ── 3e. 语法检查（重点）────────────────────
     grammar_issues = []
+    grammar_error_count = 0
 
-    # 主谓一致（粗略）
-    has_singular_verb = len(re.findall(r'\b\w+[^s]es\b', essay))  # goes, does etc
-    has_plural_subject = len(re.findall(r'\b(they|we|people|students)\s+\w+s\b', essay, re.I))
+    # 主谓不一致：we is, you is, they is, we was, they has
+    sv_errors = []
+    sv_errors += re.findall(r'\b(we|you|they)\s+is\b', essay, re.I)
+    sv_errors += re.findall(r'\b(we|you|they)\s+was\b', essay, re.I)
+    sv_errors += re.findall(r'\b(we|you|they)\s+has\b', essay, re.I)
+    sv_errors += re.findall(r'\b(he|she|it)\s+are\b', essay, re.I)
+    sv_errors += re.findall(r'\b(he|she|it)\s+were\b', essay, re.I)
+    sv_errors += re.findall(r'\b(he|she|it)\s+have\b', essay, re.I)
+    sv_errors += re.findall(r'\bI\s+(is|are|was|were)\b', essay, re.I)
+    sv_errors += re.findall(r'\bmy\s+(self|friend|mother|father|brother|sister|teacher)\s+are\b', essay, re.I)
+    sv_errors += re.findall(r'\b(the|a|an)\s+\w+\s+are\b', essay, re.I)  # the book are → 粗略
 
-    # 缺少冠词（粗略检查：以单数可数名词开头的句子前缺少a/an/the）
-    no_article_pattern = re.findall(r'\b(important|significant|crucial|necessary|effective|useful)\s+\w+\s+is\b', essay, re.I)
-    if no_article_pattern:
-        grammar_issues.append("注意冠词使用：单数可数名词前通常需要 a/an/the")
+    if sv_errors:
+        grammar_issues.append(f"⚠️ 主谓不一致 {len(sv_errors)} 处（如：{sv_errors[0][0]}...）")
+        grammar_error_count += len(sv_errors)
 
-    # 检查句子首字母大写
+    # 情态动词后跟原型：can + 过去式 / must + 过去式 等
+    modal_errors = []
+    modal_errors += re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+\w+ed\b', essay, re.I)
+    modal_errors += re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+\w+ing\b', essay, re.I)
+    # can + to do → 错误(can to go)
+    modal_errors += re.findall(r'\b(can|could|will|would|shall|should|may|might|must)\s+to\s+\w+\b', essay, re.I)
+
+    if modal_errors:
+        grammar_issues.append(f"⚠️ 情态动词用法错误 {len(modal_errors)} 处（情态动词后应跟动词原形）")
+        grammar_error_count += len(modal_errors)
+
+    # 双重过去式：didn't + 过去式
+    double_past = re.findall(r"\b(didn't|did not|doesn't|does not|don't|do not)\s+\w+ed\b", essay, re.I)
+    if double_past:
+        grammar_issues.append(f"⚠️ 否定句式错误 {len(double_past)} 处（didn't/doesn't/don't 后应跟动词原形）")
+        grammar_error_count += len(double_past)
+
+    # 非谓语动词作主语时缺ing
+    # 检查句首动词作主语是否用了原型(应有ing)
+    for s in sentences:
+        s_stripped = s.strip()
+        if s_stripped:
+            first_word = s_stripped.split()[0] if s_stripped.split() else ""
+            if first_word and re.match(r'^[a-z]+$', first_word) and first_word.endswith('t') and len(first_word) > 3:
+                pass  # 粗略跳过
+
+    # 检查有无明显时态混用（用精确动词匹配）
+    past_verbs = set(re.findall(r'\b(was|were|had|did|said|made|went|came|took|gave|got|found|knew|thought|brought|left|felt|kept|began|built|sold|told|put|meant|paid|sent|set|let|ran|saw|taught|wrote|led|became|held|grew|lost|drew|drove|drank|arose|drew|spoke|stood|won|stole|threw|woke|wore|understood|showed|believed|considered|continued|included|developed|increased|provided|reduced|created|changed|followed|allowed|required|produced|happened|appeared|achieved|described|decided|established|expressed|introduced|performed|presented|suggested|affected|offered|needed|started|tried|looked|used|called|worked|wanted|asked|helped|played|seemed|expected|accepted|received|carried|remained|realized|covered|represented|studied|formed|based|identified|encouraged|compared|designed|improved|prevented|reflected|reported|served|supported|turned|varied|adopted|applied|defined|measured|noted|proposed|selected|supplied|trained|treated|admitted|appointed|arranged|assumed|attracted|awarded|chose|collected|communicated|completed|confirmed|connected|constructed|contained|controlled|convinced|corrected|coupled|crossed|damaged|declared|declined|defeated|defended|delivered|demanded|denied|depended|derived|deserved|destroyed|determined|developed|devoted|differed|directed|disappeared|discovered|discussed|displayed|distinguished|distributed|dominated|doubted|earned|edited|educated|elected|eliminated|employed|enabled|encountered|ended|engaged|enjoyed|ensured|entered|established|evaluated|evolved|exceeded|exchanged|excluded|exhibited|expanded|expected|experienced|explained|explored|expressed|extended|extracted|facilitated|failed|favored|feared|filled|financed|finished|fixed|forced|forecast|formed|formulated|founded|framed|fulfilled|functioned|funded|gained|generated|governed|graduated|guaranteed|guided|handled|harmed|helped|identified|ignored|illustrated|imagined|implemented|imported|imposed|impressed|improved|included|incorporated|increased|indicated|induced|influenced|informed|initiated|injured|inserted|inspected|inspired|instituted|insured|integrated|intended|intensified|interpreted|intervened|interviewed|introduced|investigated|invited|involved|isolated|issued|joined|judged|justified|killed|labeled|landed|lack|launched|learned|limited|linked|listed|located|maintained|managed|manipulated|manufactured|marked|measured|mentioned|minimized|monitored|motivated|mounted|multiplied|narrowed|neglected|negotiated|nominated|noted|noticed|numbered|obtained|occupied|offered|operated|organized|oriented|originated|outlined|overcame|owned|participated|perceived|permitted|persuaded|placed|planned|pointed|possessed|practiced|praised|predicted|preferred|prepared|prescribed|presented|preserved|prevented|proceeded|processed|produced|programmed|prohibited|projected|promoted|prompted|proposed|protected|proved|provided|published|purchased|pursued|qualified|questioned|raised|ranged|ranked|rated|reacted|realized|received|recognized|recommended|recorded|recovered|recruited|reduced|referred|reflected|reformed|regarded|registered|regulated|rejected|related|released|relied|relocated|remained|remembered|reminded|removed|renewed|repeated|replaced|reported|represented|reproduced|requested|required|researched|resembled|reserved|resided|resigned|resisted|resolved|resourced|responded|restored|restricted|resulted|retained|retired|returned|revealed|reviewed|revised|revolutionized|rewarded|risked|satisfied|saved|scanned|scheduled|screened|secured|selected|separated|served|settled|severed|shaped|shared|shifted|shocked|shouted|signaled|signified|simplified|simulated|situated|skilled|smoked|solved|sought|specified|stimulated|stored|strained|strategized|strengthened|stressed|structured|studied|submitted|subscribed|substituted|succeeded|suffered|suggested|summarized|supervised|supplied|supported|supposed|suppressed|surrounded|surveyed|survived|suspected|sustained|symbolized|targeted|tended|terminated|tested|totaled|traced|tracked|traded|trained|transferred|transformed|translated|transmitted|transported|treated|triggered|trusted|tutored|uncovered|undertaken|undertook|unified|united|updated|upgraded|upheld|utilized|validated|valued|varied|verified|violated|visualized|volunteered|weakened|widened|withdrew|withheld|witnessed|wondered|wrapped|yielded)\b', essay, re.I))
+    has_past = len(past_verbs) >= 2
+    # 第三人称单数现在时动词
+    present_3rd_verbs = set(re.findall(r'\b(plays|does|goes|has|says|makes|takes|comes|gives|gets|finds|knows|thinks|brings|leaves|feels|keeps|begins|builds|sells|tells|puts|means|pays|sends|sets|lets|runs|sees|teaches|writes|leads|becomes|holds|grows|loses|draws|drives|drinks|stands|wins|steals|throws|wakes|wears|understands|shows|believes|considers|continues|includes|develops|increases|provides|reduces|creates|changes|follows|allows|requires|produces|happens|appears|achieves|describes|decides|establishes|expresses|introduces|performs|presents|suggests|affects|offers|needs|starts|tries|looks|uses|calls|works|wants|asks|helps|plays|seems|expects|accepts|receives|carries|remains|realizes|covers|represents|studies|forms|bases|identifies|encourages|compares|designs|improves|prevents|reflects|reports|serves|supports|turns|varies|adopts|applies|defines|measures|notes|proposes|selects|supplies|trains|treats)\b', essay, re.I))
+    has_present_3rd = len(present_3rd_verbs) >= 2
+    if has_past and has_present_3rd:
+        grammar_issues.append("⚠️ 时态混用：同时出现一般过去时和一般现在时第三人称单数")
+        grammar_error_count += 1
+
+    # 单复数错误：this + 复数名词 / these + 单数名词
+    plural_errors = re.findall(r'\bthis\s+\w+s\b', essay, re.I)
+    if plural_errors:
+        grammar_issues.append(f"⚠️ 单复数错误 {len(plural_errors)} 处（this 后应跟单数名词）")
+        grammar_error_count += len(plural_errors)
+
+    # 冠词缺失（粗略检查：important/significant/crucial/necessary + 单数名词前缺a/an）
+    missing_article = re.findall(r'\b(is|are|was|were|becomes|become|remains|remain)\s+(important|significant|crucial|necessary|effective|useful|good|bad|big|small|major|key)\s+\w+\b', essay, re.I)
+    if missing_article:
+        grammar_issues.append(f"⚠️ 可能缺少冠词：单数可数名词前通常需要 a/an/the")
+        grammar_error_count += len(missing_article)
+
+    # 句子首字母大写
+    cap_errors = 0
     for s in sentences:
         if s and s[0].islower():
-            grammar_issues.append(f"⚠️ 句首字母未大写：\"{s[:30]}...\"")
-            deduction += 0.5
-            break
+            cap_errors += 1
+    if cap_errors > 0:
+        grammar_issues.append(f"⚠️ 句首字母未大写（{cap_errors} 处）")
+        grammar_error_count += cap_errors
+
+    # 常见中式英语/语法错误模式
+    common_patterns = [
+        (r'\bvery\s+(good|important|necessary)\b', '"very good/important" 可用 greatly/extremely/highly 替代'),
+        (r'\bmore\s+and\s+more\b', '"more and more" 可用 increasingly 替代'),
+        (r'\bwith\s+the\s+development\b', '"with the development" 模板化开头'),
+        (r'\bas\s+we\s+all\s+know\b', '"as we all know" 老套表达'),
+        (r'\bevery\s+coin\s+has\s+two\s+sides\b', '"every coin has two sides" 模板化表达'),
+    ]
+    pattern_matches = 0
+    for pat, hint in common_patterns:
+        if re.search(pat, essay, re.I):
+            if hint not in grammar_issues:
+                grammar_issues.append(f"⚠️ {hint}")
+                pattern_matches += 1
+
+    # 语法扣分：每个语法错误扣1分，最多扣6分
+    grammar_deduction = min(grammar_error_count * 1.0, 6.0)
+    deduction += grammar_deduction
 
     if grammar_issues:
-        for g in grammar_issues[:3]:
+        for g in grammar_issues[:5]:
             warnings.append(g)
+    else:
+        suggestions.append("✅ 语法基本正确，无明显错误")
 
     # ── 综合评分 ────────────────────────────
     final_deduction = min(deduction, 14)
