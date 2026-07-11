@@ -15,7 +15,10 @@ CUSTOM_CSS = """
 .gradio-container { max-width: 960px !important; margin: 0 auto; }
 h1 { font-size: 1.8rem !important; margin-bottom: 0.3rem !important; }
 .tagline { color: #666; font-size: 0.95rem; margin-bottom: 1.2rem; }
-.result-box { border-left: 4px solid #4f86c6; padding: 0.8rem 1rem; background: #f8faff; border-radius: 0 8px 8px 0; min-height: 120px; }
+.result-box { border-left: 4px solid #4f86c6; padding: 0.8rem 1rem; background: #f0f4ff !important; border-radius: 0 8px 8px 0; min-height: 100px; }
+.result-box p, .result-box div, .result-box span, .result-box * { color: #1a1a2e !important; }
+.markdown-output { color: #1a1a2e !important; }
+.markdown-output p, .markdown-output div { color: #1a1a2e !important; }
 """
 
 def build_agent() -> ReActAgent:
@@ -137,7 +140,7 @@ def create_ui():
                     essay_btn = gr.Button("📊 开始批改", variant="primary", size="lg")
                     clear_essay_btn = gr.Button("🗑️ 清空", size="lg")
 
-                essay_output = gr.Markdown(label="批改结果", elem_classes="result-box")
+                essay_output = gr.Markdown(label="批改结果", elem_classes="result-box markdown-output")
 
                 gr.Examples(
                     examples=[
@@ -176,7 +179,7 @@ def create_ui():
                     grade_btn = gr.Button("📊 开始评分", variant="primary", size="lg")
                     clear_grade_btn = gr.Button("🗑️ 清空", size="lg")
 
-                grade_output = gr.Markdown(label="评分结果", elem_classes="result-box")
+                grade_output = gr.Markdown(label="评分结果", elem_classes="result-box markdown-output")
 
                 gr.Markdown("##### 试一个例子")
                 with gr.Row():
@@ -223,7 +226,7 @@ def create_ui():
                     answer_btn = gr.Button("🔍 查询答案", variant="primary", size="lg")
                     clear_answer_btn = gr.Button("🗑️ 清空", size="lg")
 
-                answer_output = gr.Markdown(label="查询结果", elem_classes="result-box")
+                answer_output = gr.Markdown(label="查询结果", elem_classes="result-box markdown-output")
 
                 gr.Markdown("##### 📌 可查询的考试列表")
                 available = list_available_exams()
