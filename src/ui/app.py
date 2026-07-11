@@ -93,8 +93,8 @@ def create_ui():
         """)
 
         with gr.Tabs():
-            # ── Tab 1: AI 问答 ──
-            with gr.Tab("💬 AI 问答"):
+            # ── Tab 1: 真题词典 ──
+            with gr.Tab("📖 真题词典"):
                 chatbot = gr.Chatbot(height=400)
                 msg = gr.Textbox(
                     placeholder="输入你的问题，例如：查一下 decline 在真题中的用法",
