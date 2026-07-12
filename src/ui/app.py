@@ -18,10 +18,10 @@ from src.tools.answer_lookup import format_exam_answers, list_available_exams, A
 
 # ── 全局 CSS ─────────────────────────────
 CUSTOM_CSS = """
-.gradio-container { max-width: 960px !important; margin: 0 auto; }
-body { background: #1a1a2e !important; }
-h1 { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }
-.tagline { color: #aaa !important; font-size: 0.95rem; margin-bottom: 1.2rem; }
+.gradio-container { max-width: 1200px !important; margin: 2rem auto !important; padding: 0 1.5rem !important; }
+body { background: #1a1a2e !important; margin: 0 !important; }
+h1 { font-size: 2rem !important; margin-bottom: 0.3rem !important; }
+.tagline { color: #aaa !important; font-size: 1rem; margin-bottom: 1.5rem; }
 .result-box {
     border-left: 4px solid #4f86c6; padding: 0.8rem 1rem;
     background: #16213e !important; border-radius: 0 8px 8px 0;
