@@ -9,6 +9,7 @@ from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
 from src.tools.exam_tools import check_essay, ESSAY_CHECK_TOOL
 from src.tools.translation_eval import evaluate_translation, TRANSLATION_EVAL_TOOL
 from src.tools.translation_eval_llm import evaluate_translation_llm, format_llm_report, TRANSLATION_EVAL_LLM_TOOL
+from src.tools.translation_lookup import get_translation, TRANSLATION_LOOKUP_TOOL
 from src.tools.answer_lookup import format_exam_answers, list_available_exams, ANSWER_LOOKUP_TOOL
 
 # ── 全局 CSS ─────────────────────────────
@@ -37,6 +38,7 @@ def build_agent() -> ReActAgent:
     registry.register(Tool(name=TRANSLATION_EVAL_TOOL["name"], description=TRANSLATION_EVAL_TOOL["description"], fn=evaluate_translation, parameters=TRANSLATION_EVAL_TOOL["parameters"]))
     registry.register(Tool(name=ANSWER_LOOKUP_TOOL["name"], description=ANSWER_LOOKUP_TOOL["description"], fn=format_exam_answers, parameters=ANSWER_LOOKUP_TOOL["parameters"]))
     registry.register(Tool(name=TRANSLATION_EVAL_LLM_TOOL["name"], description=TRANSLATION_EVAL_LLM_TOOL["description"], fn=evaluate_translation_llm, parameters=TRANSLATION_EVAL_LLM_TOOL["parameters"]))
+    registry.register(Tool(name=TRANSLATION_LOOKUP_TOOL["name"], description=TRANSLATION_LOOKUP_TOOL["description"], fn=get_translation, parameters=TRANSLATION_LOOKUP_TOOL["parameters"]))
     return ReActAgent(registry=registry)
 
 
@@ -177,8 +179,43 @@ def create_ui():
                 example_btn2.click(lambda: grade_example("中档译文"), None, [original_input, translation_input])
                 example_btn3.click(lambda: grade_example("人工智能"), None, [original_input, translation_input])
 
-            # ── Tab 4: 查答案 ──
-            with gr.Tab("📋 查答案"):
+            # ── Tab 4: 翻译原文与参考译文 ──
+            from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
+            def lookup_translation(exam):
+                if not exam or not exam.strip():
+                    return "请输入考试名称"
+                return get_translation(exam.strip())
+            with gr.Tab("📜 翻译原文"):
+                gr.Markdown("### 查询六级翻译真题原文与参考译文")
+                gr.Markdown("收录近十年六级翻译真题的**中文原文**和**官方参考译文**，方便对照学习。")
+
+                with gr.Row():
+                    trans_exam_input = gr.Textbox(
+                        label="考试名称",
+                        placeholder="例如：2023年6月第1套cet6",
+                        info="支持模糊搜索（如 '2023年6月'）"
+                    )
+                with gr.Row():
+                    trans_query_btn = gr.Button("🔍 查询翻译原文", variant="primary", size="lg")
+                    trans_clear_btn = gr.Button("🗑️ 清空", size="lg")
+                trans_output = gr.Markdown(label="查询结果", elem_classes="result-box markdown-output")
+
+                gr.Markdown("##### 📌 快捷查询：")
+                exams_avail = list_trans_exams()
+                for row_start in range(0, len(exams_avail), 4):
+                    row_items = exams_avail[row_start:row_start + 4]
+                    with gr.Row():
+                        for en in row_items:
+                            btn = gr.Button(f"📄 {en}", size="sm")
+                            btn.click(
+                                fn=lambda e=en: [gr.update(value=e), get_translation(e)],
+                                outputs=[trans_exam_input, trans_output]
+                            )
+                trans_exam_input.submit(lookup_translation, trans_exam_input, trans_output)
+                trans_query_btn.click(lookup_translation, trans_exam_input, trans_output)
+                trans_clear_btn.click(lambda: ("", ""), None, [trans_exam_input, trans_output])
+
+            # ── Tab 5: 查答案 ──
                 gr.Markdown("### 查询六级真题阅读答案")
                 gr.Markdown("支持 **2023~2025 年 18 套六级** 阅读答案。点击下方考试名称快速查询，或手动输入。")
 
