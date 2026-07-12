@@ -18,7 +18,8 @@ from src.tools.answer_lookup import format_exam_answers, list_available_exams, A
 
 # ── 全局 CSS ─────────────────────────────
 CUSTOM_CSS = """
-.gradio-container { max-width: 960px !important; margin: 0 auto; }
+.gradio-container { max-width: 960px !important; margin: 0 auto; background: #ffffff !important; }
+body { background: #f5f5f5 !important; }
 h1 { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }
 .tagline { color: #666; font-size: 0.95rem; margin-bottom: 1.2rem; }
 .result-box {
@@ -29,6 +30,12 @@ h1 { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }
 .result-box, .result-box p, .result-box div, .result-box span,
 .result-box *, .markdown-output, .markdown-output p, .markdown-output div {
     color: #1a1a2e !important;
+}
+.result-box code, .markdown-output code {
+    background: #e8ecf4 !important; color: #1a1a2e !important; padding: 1px 5px !important; border-radius: 3px !important; font-size: 0.9em !important;
+}
+.result-box pre, .markdown-output pre {
+    background: #e8ecf4 !important; color: #1a1a2e !important; padding: 10px !important; border-radius: 5px !important; border: none !important;
 }
 button[role="tab"] { font-size: 0.95rem !important; padding: 8px 16px !important; }
 button[role="tab"][aria-selected="true"] { border-bottom: 2px solid #4f86c6 !important; }
