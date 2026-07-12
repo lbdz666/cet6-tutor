@@ -247,7 +247,7 @@ def create_ui():
                         essay_btn.click(grade_essay, [essay_input, level_dropdown], essay_output)
                         clear_essay_btn.click(lambda: ("", ""), None, [essay_input, essay_output])
 
-                    with gr.Column(scale=5):
+                    with gr.Column(scale=5, elem_classes="right-panel"):
                         gr.Markdown("### 📝 模板")
                         tpl_level_dd = gr.Dropdown(
                             choices=[(tpl_level_labels[l], l) for l in tpl_levels],
@@ -257,7 +257,9 @@ def create_ui():
                             choices=[(t, t) for t in get_tpl_types("cet6")],
                             label="作文类型", value=get_tpl_types("cet6")[0] if get_tpl_types("cet6") else None
                         )
-                        tpl_output = gr.Markdown(elem_classes="result-box markdown-output")
+                        # 默认显示第一个模板
+                        default_tpl = show_template("cet6", get_tpl_types("cet6")[0]) if get_tpl_types("cet6") else ""
+                        tpl_output = gr.Markdown(default_tpl, elem_classes="result-box markdown-output")
                         tpl_level_dd.change(
                             fn=lambda l: gr.Dropdown(choices=[(t, t) for t in get_tpl_types(l)]),
                             inputs=tpl_level_dd, outputs=tpl_type_dd
