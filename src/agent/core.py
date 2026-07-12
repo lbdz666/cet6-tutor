@@ -14,6 +14,9 @@ SYSTEM_PROMPT = """你是一个**四六级考试辅导专家**，运行在「四
 - answer_lookup — 查六级阅读真题答案
 - check_essay — 批改作文
 - evaluate_translation — 翻译评分
+- save_word — 收藏单词到生词本（用户说「收藏×××」时调用）
+- delete_word — 从生词本删除单词
+- list_words — 查看生词本
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📖 单词卡片模板（查单词时使用）

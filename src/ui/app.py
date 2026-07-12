@@ -11,6 +11,7 @@ from src.tools.translation_eval import evaluate_translation, TRANSLATION_EVAL_TO
 from src.tools.translation_eval_llm import evaluate_translation_llm, format_llm_report, TRANSLATION_EVAL_LLM_TOOL
 from src.tools.exam_tools_llm import check_essay_llm, format_essay_llm_report, ESSAY_CHECK_LLM_TOOL
 from src.tools.translation_lookup import get_translation, TRANSLATION_LOOKUP_TOOL
+from src.tools.vocabulary import save_word, delete_word, list_words, get_words_list, SAVE_WORD_TOOL, DELETE_WORD_TOOL, LIST_WORDS_TOOL
 from src.tools.answer_lookup import format_exam_answers, list_available_exams, ANSWER_LOOKUP_TOOL
 
 # ── 全局 CSS ─────────────────────────────
@@ -41,6 +42,9 @@ def build_agent() -> ReActAgent:
     registry.register(Tool(name=TRANSLATION_EVAL_LLM_TOOL["name"], description=TRANSLATION_EVAL_LLM_TOOL["description"], fn=evaluate_translation_llm, parameters=TRANSLATION_EVAL_LLM_TOOL["parameters"]))
     registry.register(Tool(name=ESSAY_CHECK_LLM_TOOL["name"], description=ESSAY_CHECK_LLM_TOOL["description"], fn=check_essay_llm, parameters=ESSAY_CHECK_LLM_TOOL["parameters"]))
     registry.register(Tool(name=TRANSLATION_LOOKUP_TOOL["name"], description=TRANSLATION_LOOKUP_TOOL["description"], fn=get_translation, parameters=TRANSLATION_LOOKUP_TOOL["parameters"]))
+    registry.register(Tool(name=SAVE_WORD_TOOL["name"], description=SAVE_WORD_TOOL["description"], fn=save_word, parameters=SAVE_WORD_TOOL["parameters"]))
+    registry.register(Tool(name=DELETE_WORD_TOOL["name"], description=DELETE_WORD_TOOL["description"], fn=delete_word, parameters=DELETE_WORD_TOOL["parameters"]))
+    registry.register(Tool(name=LIST_WORDS_TOOL["name"], description=LIST_WORDS_TOOL["description"], fn=list_words, parameters=LIST_WORDS_TOOL["parameters"]))
     return ReActAgent(registry=registry)
 
 
@@ -224,6 +228,39 @@ def create_ui():
                 answer_output = gr.Markdown(elem_classes="result-box markdown-output")
                 answer_exam_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
                 answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
+
+            # ── Tab 6: 生词本 ──
+            def refresh_vocab():
+                words = get_words_list()
+                if not words:
+                    return "📭 生词本为空，查单词时在聊天框输入「收藏 economy」即可保存"
+                lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 收藏时间 |", "|---|------|----------|"]
+                for i, w in enumerate(words, 1):
+                    lines.append(f"| {i} | **{w['word']}** | {w.get('saved_at', '?')} |")
+                return "\n".join(lines)
+
+            def vocab_add(word):
+                if not word or not word.strip():
+                    return "请输入单词", refresh_vocab()
+                return save_word(word.strip()), refresh_vocab()
+
+            def vocab_delete(word):
+                if not word or not word.strip():
+                    return "请输入单词", refresh_vocab()
+                return delete_word(word.strip()), refresh_vocab()
+
+            with gr.Tab("📚 生词本"):
+                gr.Markdown("### 收藏的单词")
+                gr.Markdown("在「📖 真题词典」中查单词时，输入 **收藏 ×××** 即可保存到生词本。也可以直接在这里添加/删除。")
+                with gr.Row():
+                    vocab_input = gr.Textbox(label="单词", placeholder="输入单词，如 economy", scale=4)
+                    vocab_add_btn = gr.Button("➕ 收藏", variant="primary", scale=1)
+                    vocab_del_btn = gr.Button("🗑️ 删除", scale=1)
+                vocab_status = gr.Markdown("")
+                vocab_list = gr.Markdown(refresh_vocab())
+                vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_list])
+                vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_list])
+                vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_list])
 
     return demo
 
