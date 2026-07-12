@@ -266,52 +266,51 @@ def create_ui():
                         )
                         tpl_level_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
                         tpl_type_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
-
-            # ── Tab 3: 翻译批改 + 参考译文 ──
+            # ── Tab 3: 翻译批改 + 参考译文（左右分栏）──
+            from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
+            trans_exam_choices = [(e, e) for e in list_trans_exams()]
+            def lookup_translation_dd(exam):
+                if not exam:
+                    return "请选择考试"
+                return get_translation(exam)
             with gr.Tab("📝 翻译批改"):
-                gr.Markdown("### 六级翻译评分标准")
-                gr.Markdown("按 **信达雅** 三方面评分，满分 **15 分**。填入中文原文和你的英文译文，AI 自动评分。")
-                with gr.Row():
-                    with gr.Column():
-                        original_input = gr.Textbox(label="中文原文", placeholder="粘贴中文原文句子或段落", lines=5)
-                    with gr.Column():
-                        translation_input = gr.Textbox(label="你的英文译文", placeholder="粘贴你的英文译文", lines=5)
-                with gr.Row():
-                    grade_btn = gr.Button("📊 开始评分", variant="primary", size="lg")
-                    clear_grade_btn = gr.Button("🗑️ 清空", size="lg")
-                grade_output = gr.Markdown(label="评分结果", elem_classes="result-box markdown-output")
-                gr.Markdown("##### 试一个例子")
-                with gr.Row():
-                    example_btn1 = gr.Button("🌾 乡村振兴")
-                    example_btn2 = gr.Button("📉 中档译文")
-                    example_btn3 = gr.Button("🤖 人工智能")
-                original_input.submit(grade_translation, [original_input, translation_input], grade_output)
-                translation_input.submit(grade_translation, [original_input, translation_input], grade_output)
-                grade_btn.click(grade_translation, [original_input, translation_input], grade_output)
-                clear_grade_btn.click(lambda: ("", "", ""), None, [original_input, translation_input, grade_output])
-                example_btn1.click(lambda: grade_example("乡村振兴"), None, [original_input, translation_input])
-                example_btn2.click(lambda: grade_example("中档译文"), None, [original_input, translation_input])
-                example_btn3.click(lambda: grade_example("人工智能"), None, [original_input, translation_input])
+                with gr.Row(equal_height=False):
+                    with gr.Column(scale=7):
+                        gr.Markdown("### ✍️ 批改")
+                        with gr.Row():
+                            with gr.Column():
+                                original_input = gr.Textbox(label="中文原文", placeholder="粘贴中文原文句子或段落", lines=5)
+                            with gr.Column():
+                                translation_input = gr.Textbox(label="你的英文译文", placeholder="粘贴你的英文译文", lines=5)
+                        with gr.Row():
+                            grade_btn = gr.Button("📊 开始评分", variant="primary", size="lg")
+                            clear_grade_btn = gr.Button("🗑️ 清空", size="lg")
+                        grade_output = gr.Markdown(elem_classes="result-box markdown-output")
+                        gr.Markdown("##### 试一个例子")
+                        with gr.Row():
+                            example_btn1 = gr.Button("🌾 乡村振兴")
+                            example_btn2 = gr.Button("📉 中档译文")
+                            example_btn3 = gr.Button("🤖 人工智能")
+                        original_input.submit(grade_translation, [original_input, translation_input], grade_output)
+                        translation_input.submit(grade_translation, [original_input, translation_input], grade_output)
+                        grade_btn.click(grade_translation, [original_input, translation_input], grade_output)
+                        clear_grade_btn.click(lambda: ("", "", ""), None, [original_input, translation_input, grade_output])
+                        example_btn1.click(lambda: grade_example("乡村振兴"), None, [original_input, translation_input])
+                        example_btn2.click(lambda: grade_example("中档译文"), None, [original_input, translation_input])
+                        example_btn3.click(lambda: grade_example("人工智能"), None, [original_input, translation_input])
 
-                # ── 参考译文（原 Tab 4 合并进来）──
-                gr.Markdown("---")
-                gr.Markdown("### 📖 参考译文")
-                gr.Markdown("批改完成后，选择对应考试查看官方参考译文：")
-                from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
-                trans_exam_choices = [(e, e) for e in list_trans_exams()]
-                def lookup_translation_dd(exam):
-                    if not exam:
-                        return "请选择考试"
-                    return get_translation(exam)
-                with gr.Row():
-                    trans_exam_dd = gr.Dropdown(
-                        choices=trans_exam_choices,
-                        label="选择考试",
-                        info="输入年份快速筛选（如 2023）",
-                        interactive=True
-                    )
-                trans_output = gr.Markdown(elem_classes="result-box markdown-output")
-                trans_exam_dd.input(lookup_translation_dd, trans_exam_dd, trans_output)
+                    with gr.Column(scale=5, elem_classes="right-panel"):
+                        gr.Markdown("### 📖 参考译文")
+                        trans_exam_dd = gr.Dropdown(
+                            choices=trans_exam_choices,
+                            label="选择考试",
+                            info="输入年份快速筛选（如 2023）",
+                            interactive=True
+                        )
+                        # 默认显示第一个考试
+                        default_ref = lookup_translation_dd(trans_exam_choices[0][1]) if trans_exam_choices else ""
+                        trans_output = gr.Markdown(default_ref, elem_classes="result-box markdown-output")
+                        trans_exam_dd.input(lookup_translation_dd, trans_exam_dd, trans_output)
 
             # ── Tab 4: 查答案 ──
             answer_exam_choices = [(e, e) for e in list_available_exams()]
