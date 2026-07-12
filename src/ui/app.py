@@ -13,6 +13,7 @@ from src.tools.translation_eval_llm import evaluate_translation_llm, format_llm_
 from src.tools.exam_tools_llm import check_essay_llm, format_essay_llm_report, ESSAY_CHECK_LLM_TOOL
 from src.tools.translation_lookup import get_translation, TRANSLATION_LOOKUP_TOOL
 from src.tools.vocabulary import save_word, delete_word, list_words, get_words_list, SAVE_WORD_TOOL, DELETE_WORD_TOOL, LIST_WORDS_TOOL
+from src.tools.essay_templates import format_template_preview, list_levels as tpl_list_levels, list_types as tpl_list_types, ESSAY_TEMPLATE_TOOL
 from src.tools.answer_lookup import format_exam_answers, list_available_exams, ANSWER_LOOKUP_TOOL
 
 # ── 全局 CSS ─────────────────────────────
@@ -48,6 +49,7 @@ def build_agent() -> ReActAgent:
     registry.register(Tool(name=SAVE_WORD_TOOL["name"], description=SAVE_WORD_TOOL["description"], fn=save_word, parameters=SAVE_WORD_TOOL["parameters"]))
     registry.register(Tool(name=DELETE_WORD_TOOL["name"], description=DELETE_WORD_TOOL["description"], fn=delete_word, parameters=DELETE_WORD_TOOL["parameters"]))
     registry.register(Tool(name=LIST_WORDS_TOOL["name"], description=LIST_WORDS_TOOL["description"], fn=list_words, parameters=LIST_WORDS_TOOL["parameters"]))
+    registry.register(Tool(name=ESSAY_TEMPLATE_TOOL["name"], description=ESSAY_TEMPLATE_TOOL["description"], fn=format_template_preview, parameters=ESSAY_TEMPLATE_TOOL["parameters"]))
     return ReActAgent(registry=registry)
 
 
@@ -226,6 +228,35 @@ def create_ui():
                 essay_input.submit(grade_essay, [essay_input, level_dropdown], essay_output)
                 essay_btn.click(grade_essay, [essay_input, level_dropdown], essay_output)
                 clear_essay_btn.click(lambda: ("", ""), None, [essay_input, essay_output])
+
+                # ── 作文模板 ──
+                gr.Markdown("---")
+                gr.Markdown("### 📝 作文模板")
+                gr.Markdown("选择级别和作文类型，查看模板句式和完整范文：")
+                tpl_levels = ["cet4", "cet6", "通用"]
+                tpl_level_labels = {"cet4": "四级 CET-4", "cet6": "六级 CET-6", "通用": "通用"}
+                def get_tpl_types(level):
+                    return tpl_list_types(level)
+                def show_template(level, type_name):
+                    if not level or not type_name:
+                        return "请选择级别和类型"
+                    return format_template_preview(level, type_name)
+                with gr.Row():
+                    tpl_level_dd = gr.Dropdown(
+                        choices=[(tpl_level_labels[l], l) for l in tpl_levels],
+                        value="cet6", label="级别"
+                    )
+                    tpl_type_dd = gr.Dropdown(
+                        choices=[(t, t) for t in get_tpl_types("cet6")],
+                        label="作文类型", value=get_tpl_types("cet6")[0] if get_tpl_types("cet6") else None
+                    )
+                tpl_output = gr.Markdown(elem_classes="result-box markdown-output")
+                tpl_level_dd.change(
+                    fn=lambda l: gr.Dropdown(choices=[(t, t) for t in get_tpl_types(l)]),
+                    inputs=tpl_level_dd, outputs=tpl_type_dd
+                )
+                tpl_level_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
+                tpl_type_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
 
             # ── Tab 3: 翻译批改 + 参考译文 ──
             with gr.Tab("📝 翻译批改"):

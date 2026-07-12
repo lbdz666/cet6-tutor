@@ -1,0 +1,268 @@
+{
+  "description": "四六级作文模板库",
+  "templates": {
+    "cet4": {
+      "观点选择型": {
+        "level": "四级",
+        "description": "给出一句话话题，要求你选择支持或反对，展开论述。常见开头如 'Some people think... Others believe...'",
+        "structure": "三段式：首段亮观点 → 主体段论证（2-3个理由）→ 结尾段重申观点",
+        "template": {
+          "opening": [
+            "When it comes to {话题}, people's opinions differ greatly. Some believe that {观点A}, while others argue that {观点B}. As far as I am concerned, I am in favor of the former/latter view.",
+            "Recently, the issue of {话题} has sparked heated debate. Many individuals hold that {观点A}, whereas others contend that {观点B}. From my perspective, I side with the former/latter.",
+            "There is a widespread discussion about {话题}. Some people advocate that {观点A}, while others take the opposite stance. Personally, I believe that {观点B}."
+          ],
+          "body": [
+            "First and foremost, {理由1}. For example, {例子1}. This clearly shows that {总结}.",
+            "Moreover, {理由2}. Take {例子2} as an example. It is evident that {进一步说明}.",
+            "Last but not least, {理由3}. Studies have shown that {数据/事实}. Therefore, it is reasonable to conclude that {总结}."
+          ],
+          "closing": [
+            "In conclusion, taking all factors into consideration, I firmly believe that {重申观点}. Only by doing so can we {展望}.",
+            "To sum up, although both sides have their merits, I am convinced that {观点}. It is high time that we took action to {建议}.",
+            "In a word, the advantages of {观点} outweigh its disadvantages. We should make every effort to {行动}."
+          ]
+        },
+        "full_example": {
+          "title": "Should Students Use Smartphones?",
+          "opening": "When it comes to whether college students should use smartphones on campus, opinions vary from person to person. Some believe that smartphones can facilitate learning, while others argue that they cause distraction. As far as I am concerned, I am in favor of the former view.",
+          "body": "First and foremost, smartphones provide easy access to a wealth of educational resources. For example, students can use dictionary apps to look up unfamiliar words instantly and watch online lectures to supplement classroom learning. This clearly shows that smartphones can enhance rather than hinder academic performance. Moreover, smartphones help students stay connected with their peers and instructors. Take group projects as an example — students can communicate via WeChat groups to coordinate tasks and share materials anytime, anywhere. It is evident that such connectivity fosters collaboration and efficiency. Last but not least, many useful apps can help students manage their time and schedule. Studies have shown that students who use calendar and reminder apps tend to be more organized and productive than those who do not.",
+          "closing": "In conclusion, taking all factors into consideration, I firmly believe that the benefits of using smartphones on campus outweigh the drawbacks. Only by learning to use them wisely can we truly harness their potential for academic success."
+        }
+      },
+      "利弊分析型": {
+        "level": "四级",
+        "description": "分析某事物的优点和缺点，最后给出自己的看法或建议。",
+        "structure": "三段式：首段引出话题 → 主体段分利弊 → 结尾段给看法",
+        "template": {
+          "opening": [
+            "With the development of society, {话题} has become an increasingly hot topic. Like everything else, it has both advantages and disadvantages.",
+            "Nowadays, {话题} has aroused wide concern. Some people speak highly of it, while others are strongly against it. In this essay, I will analyze its pros and cons.",
+            "There is no denying that {话题} plays an important role in our daily lives. However, as a double-edged sword, it brings both benefits and drawbacks."
+          ],
+          "body_advantages": [
+            "On the positive side, {优点1}. For instance, {例子}. This undoubtedly benefits {对象}.",
+            "Another significant advantage is that {优点2}. Consequently, {结果}.",
+            "Moreover, {话题} contributes to {好处}. This is particularly beneficial for {对象}."
+          ],
+          "body_disadvantages": [
+            "Nevertheless, we should not overlook its drawbacks. To begin with, {缺点1}. This may lead to {后果}.",
+            "In addition, {缺点2}. A typical example is {例子}.",
+            "What's worse, {缺点3}. This problem, if left unsolved, could {负面影响}."
+          ],
+          "closing": [
+            "In my opinion, the advantages of {话题} outweigh its disadvantages. What matters most is that we should learn to use it properly and avoid its negative effects.",
+            "To sum up, every coin has two sides. We should take a rational attitude toward {话题} and make the best use of it while minimizing its potential harm."
+          ]
+        },
+        "full_example": {
+          "title": "The Pros and Cons of Online Learning",
+          "opening": "With the rapid development of the Internet, online learning has become an increasingly popular educational approach. Like everything else, it has both advantages and disadvantages.",
+          "body_advantages": "On the positive side, online learning offers great flexibility and convenience. For instance, students can access course materials anytime and anywhere, without being restricted by time or location. This undoubtedly benefits those who have busy schedules or live in remote areas. Another significant advantage is that online learning is often more affordable than traditional education. Consequently, it provides more people with equal opportunities to receive quality education.",
+          "body_disadvantages": "Nevertheless, we should not overlook its drawbacks. To begin with, online learning lacks face-to-face interaction between teachers and students. This may lead to a sense of isolation and reduce learning motivation. In addition, not all students have access to stable Internet connections or suitable devices for online classes. This problem, if left unsolved, could widen the educational gap between different regions.",
+          "closing": "In my opinion, the advantages of online learning outweigh its disadvantages. What matters most is that we should take a rational attitude toward it and find ways to overcome its shortcomings while fully utilizing its potential."
+        }
+      },
+      "现象分析型": {
+        "level": "四级",
+        "description": "描述一个社会现象，分析其原因和影响，最后给出建议。",
+        "structure": "三段式：首段描述现象 → 主体段分析原因/影响 → 结尾段给建议",
+        "template": {
+          "opening": [
+            "In recent years, {现象} has become a common phenomenon that has attracted widespread attention.",
+            "Nowadays, it is not uncommon to see that {现象}. This issue has aroused great concern among the general public.",
+            "With the rapid pace of modern life, {现象} has emerged as one of the most pressing issues of our time."
+          ],
+          "body_causes": [
+            "A number of factors may account for this phenomenon. First and foremost, {原因1}.",
+            "Moreover, {原因2} also plays an important role in this trend.",
+            "Last but not least, {原因3} contributes to the seriousness of this issue."
+          ],
+          "body_effects": [
+            "The impacts of this phenomenon are far-reaching. On the one hand, {影响1}.",
+            "On the other hand, {影响2}. If this situation continues, it may lead to {后果}."
+          ],
+          "closing": [
+            "In view of the seriousness of this issue, effective measures should be taken. For one thing, {建议1}. For another, {建议2}. Only in this way can we {目标}.",
+            "To address this problem, joint efforts are required. It is essential that {建议}. Meanwhile, we should also {建议2}. The future of our society depends on our actions today."
+          ]
+        },
+        "full_example": {
+          "title": "The Widespread Use of Mobile Payment",
+          "opening": "In recent years, mobile payment has become a common phenomenon that has attracted widespread attention. From street vendors to luxury stores, almost every business now accepts payment via smartphone apps like WeChat Pay and Alipay.",
+          "body_causes": "A number of factors may account for this phenomenon. First and foremost, the rapid advancement of smartphone technology has made mobile payment possible and convenient. Moreover, the Chinese government has actively promoted the development of a cashless society, which further accelerates the adoption of mobile payment. Last but not least, the younger generation, who are digital natives, prefer the speed and simplicity of paying with their phones rather than carrying cash or cards.",
+          "body_effects": "The impacts of this phenomenon are far-reaching. On the one hand, mobile payment has greatly enhanced the efficiency of transactions, saving consumers and merchants valuable time. On the other hand, however, it has raised concerns about data privacy and financial security. If this situation continues, it may lead to increased risks of fraud and personal information leakage.",
+          "closing": "In view of the seriousness of this issue, effective measures should be taken. For one thing, the government should strengthen regulations to protect users' financial data. For another, users themselves should enhance their安全意识 and adopt safe payment habits. Only in this way can we enjoy the convenience of mobile payment without compromising our security."
+        }
+      }
+    },
+    "cet6": {
+      "观点选择型": {
+        "level": "六级",
+        "description": "更复杂的议论文，需要更深入的分析和更丰富的论证。六级要求用词更精准、句式更复杂。",
+        "structure": "四段式：引言段 → 让步段（承认反方）→ 论证段 → 结论段",
+        "template": {
+          "opening": [
+            "The issue of whether {话题} has triggered a heated debate in contemporary society. Proponents argue that {观点A}, whereas critics contend that {观点B}. This essay will attempt to explore this issue from multiple perspectives.",
+            "In the era of rapid social change, few issues are more contentious than {话题}. While some advocate that {观点A}, others take a diametrically opposite view. From my perspective, the latter/former argument carries more weight."
+          ],
+          "concession": [
+            "Admittedly, those who oppose {我的观点} have some valid concerns. They argue that {反方理由}. There is some truth in this argument, as {承认合理之处}.",
+            "It must be acknowledged that {反方观点} does have its merits. For instance, {反方例子}. However, this is only one side of the coin."
+          ],
+          "body": [
+            "Nevertheless, a closer examination reveals that {我的观点} is more justified. First and foremost, {理由1}. To illustrate, {例子1}. This substantiates the claim that {总结}.",
+            "Furthermore, it is worth noting that {理由2}. According to a recent survey conducted by {机构}, {数据/事实}. Such evidence convincingly demonstrates that {进一步论证}.",
+            "Above all, {理由3} should not be overlooked. Failure to {行动} would inevitably result in {负面后果}."
+          ],
+          "closing": [
+            "In conclusion, after weighing the pros and cons, I firmly hold that {重申观点}. It is imperative that we {行动} to {目标}. Only through concerted efforts can we expect a brighter future.",
+            "To summarize, although both perspectives have their justifications, I am convinced that {观点}. The time has come for us to take concrete steps to {行动}."
+          ]
+        },
+        "full_example": {
+          "title": "The Role of Artificial Intelligence in Education",
+          "opening": "The issue of whether artificial intelligence should be integrated into education has triggered a heated debate in contemporary society. Proponents argue that AI can revolutionize learning, whereas critics contend that it may undermine the role of human teachers. This essay will attempt to explore this issue from multiple perspectives.",
+          "concession": "Admittedly, those who oppose over-reliance on AI in education have some valid concerns. They argue that machines cannot replicate the empathy and emotional support that human teachers provide. There is some truth in this argument, as education involves not only knowledge transmission but also character cultivation and emotional bonding.",
+          "body": "Nevertheless, a closer examination reveals that the integration of AI into education is more justified. First and foremost, AI-powered personalized learning systems can adapt to each student's pace and style. To illustrate, platforms like Squirrel AI have demonstrated remarkable success in improving students' test scores by providing tailored exercises and instant feedback. This substantiates the claim that technology can enhance rather than replace traditional teaching. Furthermore, it is worth noting that AI can handle repetitive tasks such as grading and data analysis, freeing up teachers to focus on more creative and interactive aspects of education. Above all, the potential of AI to bridge educational gaps in remote areas should not be overlooked. Failure to embrace this technology would inevitably result in widening the disparity between developed and underdeveloped regions.",
+          "closing": "In conclusion, after weighing the pros and cons, I firmly hold that AI should be embraced as a powerful supplement to traditional education. It is imperative that we train teachers to effectively utilize AI tools and establish ethical guidelines for their use. Only through concerted efforts can we create an education system that combines the best of human wisdom and technological innovation."
+        }
+      },
+      "利弊分析型": {
+        "level": "六级",
+        "description": "六级利弊分析要求更深入，不仅要列出利弊，还要分析深层原因，语言要求更高。",
+        "structure": "四段式：引言 → 利 → 弊 → 综合结论",
+        "template": {
+          "opening": [
+            "The recent years have witnessed the burgeoning of {话题}, which has become an integral part of modern life. While it is widely acknowledged that this trend brings numerous benefits, its potential drawbacks should not be ignored.",
+            "In contemporary society, {话题} has emerged as a double-edged sword. On the one hand, it offers unprecedented opportunities; on the other hand, it poses significant challenges that demand our attention."
+          ],
+          "body_advantages": [
+            "The advocates of {话题} cite several compelling reasons. To begin with, {优点1}. Take {例子} as a case in point, which illustrates how {好处}.",
+            "Another factor that deserves mention is that {优点2}. This is particularly significant in the context of {背景}.",
+            "Moreover, {话题} plays a pivotal role in {好处3}, thereby contributing to {更广泛的好处}."
+          ],
+          "body_disadvantages": [
+            "However, it would be shortsighted to turn a blind eye to the potential risks involved. One pressing concern is that {缺点1}. This could {负面后果}.",
+            "In addition, {缺点2} should not be underestimated. The ramifications of this problem could extend to {影响范围}.",
+            "Worst of all, {缺点3}. If this issue remains unaddressed, it may spiral into {更严重的后果}."
+          ],
+          "closing": [
+            "In light of the above analysis, it is clear that {话题} is a mixed blessing. The optimal approach is to capitalize on its strengths while mitigating its weaknesses. It is recommended that {建议}. Only by doing so can we maximize its benefits and minimize its harms.",
+            "To conclude, while {话题} brings undeniable advantages, the associated risks call for prudent management. We should adopt a balanced perspective and take proactive measures to ensure that this trend serves the greater good."
+          ]
+        },
+        "full_example": {
+          "title": "The Impact of Social Media on Society",
+          "opening": "The recent years have witnessed the burgeoning of social media platforms such as WeChat,微博 and TikTok, which have become an integral part of modern life. While it is widely acknowledged that this trend brings numerous benefits, its potential drawbacks should not be ignored.",
+          "body_advantages": "The advocates of social media cite several compelling reasons. To begin with, it has dramatically lowered the barriers to information dissemination. Take the COVID-19 pandemic as a case in point — social media platforms enabled real-time updates and connected people during lockdowns, illustrating how technology can maintain social cohesion in times of crisis. Another factor that deserves mention is that social media has created unprecedented economic opportunities. Live-streaming e-commerce, for example, has empowered small businesses and individual entrepreneurs to reach millions of customers without substantial capital investment. Moreover, social media plays a pivotal role in giving a voice to marginalized groups, thereby contributing to a more inclusive and diverse public discourse.",
+          "body_disadvantages": "However, it would be shortsighted to turn a blind eye to the potential risks involved. One pressing concern is that excessive use of social media has been linked to mental health issues such as anxiety and depression, particularly among young people. This could lead to a generation struggling with self-esteem and social skills. In addition, the spread of misinformation on social platforms should not be underestimated. The ramifications of this problem could extend to political polarization and public health crises. Worst of all, the算法-driven content recommendation systems can create echo chambers, trapping users in information bubbles that reinforce their existing biases. If this issue remains unaddressed, it may spiral into a deeply fragmented society where mutual understanding becomes increasingly difficult.",
+          "closing": "In light of the above analysis, it is clear that social media is a mixed blessing. The optimal approach is to capitalize on its strengths while mitigating its weaknesses. It is recommended that users cultivate digital literacy, that platforms strengthen content moderation, and that governments establish reasonable regulations. Only by doing so can we maximize the benefits of social media while minimizing its harms."
+        }
+      },
+      "谚语名言型": {
+        "level": "六级",
+        "description": "给出一句谚语或名言，要求理解其含义并展开论述。六级要求深度挖掘寓意，结合现实例证。",
+        "structure": "四段式：解读名言 → 举例论证 → 深入分析 → 总结升华",
+        "template": {
+          "opening": [
+            "\"{名言}\" — this remark, made by {出处}, is particularly thought-provoking. The implication behind it is that {解读寓意}. In my understanding, this saying holds true in many aspects of our lives.",
+            "The proverb \"{名言}\" has been widely circulated for centuries. Simple as it may appear, it contains profound wisdom: {解读寓意}. This essay aims to explore the significance of this idea."
+          ],
+          "body_example": [
+            "A classic example that illustrates this point is {例子}. {简述例子内容}. This case vividly demonstrates how {联系名言寓意}.",
+            "History abounds with similar examples. Take {例子} as an illustration. Without {体现的品质}, it would have been impossible for {对象} to achieve {成就}."
+          ],
+          "body_depth": [
+            "The deeper implication of this saying lies in its reminder that {深层含义}. In today's fast-paced world, where {社会现状}, this wisdom is more relevant than ever.",
+            "From a broader perspective, this proverb teaches us that {普遍真理}. It encourages us to {行动指引} rather than {反面行为}."
+          ],
+          "closing": [
+            "To conclude, the proverb \"{名言}\" conveys a timeless truth that remains as relevant today as it was in the past. It reminds us that {总结寓意}. As the saying goes, {呼应名言}.",
+            "In a nutshell, this insightful remark serves as a guiding principle for {应用领域}. By bearing this wisdom in mind, we can {展望/行动}. After all, {呼应升华}."
+          ]
+        },
+        "full_example": {
+          "title": "Where There's a Will, There's a Way",
+          "opening": "\"Where there's a will, there's a way\" — this timeless proverb, passed down through generations, is particularly thought-provoking. The implication behind it is that determination and perseverance can overcome any obstacle. In my understanding, this saying holds true in many aspects of our lives, especially in the pursuit of personal goals.",
+          "body_example": "A classic example that illustrates this point is the story of Stephen Hawking. Despite being diagnosed with a rare motor neuron disease at the age of 21 and being confined to a wheelchair, he never gave up his passion for physics. By sheer determination and willpower, he went on to make groundbreaking discoveries about black holes and the universe. This case vividly demonstrates how an indomitable will can triumph over seemingly insurmountable physical limitations.",
+          "body_depth": "The deeper implication of this saying lies in its reminder that success is not determined by talent or resources alone, but by one's attitude and persistence. In today's fast-paced world, where instant gratification has become the norm and many people give up at the first sign of difficulty, this wisdom is more relevant than ever. It encourages us to embrace challenges as opportunities for growth rather than retreating in the face of adversity.",
+          "closing": "To conclude, the proverb \"Where there's a will, there's a way\" conveys a timeless truth that remains as relevant today as it was centuries ago. It reminds us that with unwavering determination, no dream is too distant and no goal is unattainable. As the famous saying goes, the only limit to our realization of tomorrow will be our doubts of today."
+        }
+      }
+    },
+    "通用": {
+      "书信模板": {
+        "level": "四级/六级通用",
+        "description": "英文书信有固定格式，包括称呼、正文、结尾敬语和署名。",
+        "structure": "五部分：称呼 → 引言段 → 主体段 → 结尾段 → 敬语+署名",
+        "template": {
+          "opening": [
+            "Dear {称呼},",
+            "",
+            "I am writing this letter to {写信目的（邀请/感谢/投诉/建议等）}.",
+            "",
+            "I am writing to express my {感情/态度} regarding {话题}."
+          ],
+          "body_invitation": [
+            "I would like to invite you to {活动内容}, which will be held on {时间} at {地点}.",
+            "The event will feature {活动亮点}. I sincerely hope you can join us and share your insights.",
+            "Please let me know whether you will be available. I would be more than happy to make further arrangements."
+          ],
+          "body_thanks": [
+            "I would like to express my sincere gratitude for {感谢原因}.",
+            "Without your {帮助/支持}, I would not have been able to {取得的成就}.",
+            "I truly appreciate your kindness and hope to repay your help in the future."
+          ],
+          "body_complaint": [
+            "I am writing to draw your attention to the problem of {投诉内容}.",
+            "I was disappointed to find that {具体问题}. This has caused considerable inconvenience to {影响}.",
+            "I would greatly appreciate it if you could look into this matter and take appropriate measures at your earliest convenience."
+          ],
+          "closing": [
+            "Thank you for your time and consideration. I look forward to your favorable reply at your earliest convenience.",
+            "Best wishes and looking forward to hearing from you soon.",
+            "Yours sincerely,",
+            "{署名}"
+          ]
+        },
+        "full_example": {
+          "type": "建议信",
+          "content": "Dear Editor,\n\nI am a regular reader of your newspaper and I am writing to offer my suggestions on how to raise public awareness of environmental protection.\n\nTo begin with, I propose that your newspaper publish more articles about the urgency of environmental issues, so that readers can better understand the seriousness of the problem. In addition, it would be beneficial to organize community activities such as tree-planting campaigns or recycling workshops, which can engage the public in concrete actions.\n\nI would be grateful if you could take my suggestions into consideration. I firmly believe that with joint efforts, we can make our city a greener and more pleasant place to live.\n\nYours sincerely,\nLi Ming"
+        }
+      },
+      "图表作文": {
+        "level": "六级",
+        "description": "给出图表（柱状图/折线图/饼图），要求描述数据变化并分析原因。",
+        "structure": "三段式：描述图表 → 分析原因 → 总结/预测",
+        "template": {
+          "opening": [
+            "The {图表类型} above clearly illustrates the changes in {主题} from {时间范围}. According to the data, {总体趋势概括}.",
+            "As can be seen from the {图表类型}, there has been a dramatic increase/decrease in {主题} over the period from {年份} to {年份}."
+          ],
+          "body_data": [
+            "Specifically, the figure for {项目A} rose sharply from {数值} in {年份} to {数值} in {年份}, representing an increase of {百分比}.",
+            "Meanwhile, {项目B} experienced a slight decline, dropping from {原数值} to {新数值} during the same period.",
+            "It is also worth noting that {项目C} remained relatively stable, fluctuating between {数值范围}."
+          ],
+          "body_reasons": [
+            "Several factors may account for this trend. To begin with, {原因1} has contributed significantly to the change.",
+            "Moreover, {原因2} also plays a role in shaping this phenomenon.",
+            "Last but not least, the improvement in {方面} has further accelerated this trend."
+          ],
+          "closing": [
+            "In conclusion, the chart clearly demonstrates {总结趋势}. It is predicted that this trend will continue in the foreseeable future, and relevant measures should be taken to {应对措施}.",
+            "To summarize, the data presented in the chart suggests that {结论}. If this trend persists, we can expect that {预测}."
+          ]
+        },
+        "full_example": {
+          "title": "Changes in College Students' Reading Habits",
+          "opening": "The bar chart above clearly illustrates the changes in college students' reading habits from 2015 to 2025. According to the data, there has been a remarkable shift from print media to digital reading over the past decade.",
+          "body_data": "Specifically, the percentage of students who prefer reading on mobile devices rose sharply from 30% in 2015 to 85% in 2025, representing an increase of 55 percentage points. Meanwhile, the proportion of students who choose printed books experienced a steady decline, dropping from 60% to 20% during the same period. It is also worth noting that reading on e-readers such as Kindles remained relatively stable, fluctuating between 10% and 15%.",
+          "body_reasons": "Several factors may account for this trend. To begin with, the widespread adoption of smartphones has made digital reading more accessible and convenient than ever before. Moreover, the availability of online reading platforms offering免费 or affordable e-books has greatly encouraged students to shift to digital reading. Last but not least, the COVID-19 pandemic accelerated this transition, as students were forced to rely on digital resources during lockdowns.",
+          "closing": "In conclusion, the chart clearly demonstrates that digital reading has become the dominant mode of reading among college students. It is predicted that this trend will continue in the foreseeable future, and universities should adapt their libraries and teaching resources accordingly to meet changing student needs."
+        }
+      }
+    }
+  }
+}
