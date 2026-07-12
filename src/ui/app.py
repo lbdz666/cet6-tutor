@@ -171,10 +171,8 @@ def create_ui():
         words = re.findall(r'[a-zA-Z]{2,}', text)
         return len(words) == 1
 
-    def chat_fn(message, history, progress=gr.Progress()):
-        progress(0, desc="⏳ 正在查询...")
+    def chat_fn(message, history):
         if not message or not message.strip():
-            progress(1, desc="完成")
             return "", history, ""
         # 查词请求直接走 word_lookup，不走 Agent（快很多）
         if _is_word_query(message):
@@ -204,20 +202,13 @@ def create_ui():
                         response = result
                     history.append({"role": "user", "content": message})
                     history.append({"role": "assistant", "content": response})
-                    progress(1, desc="✅ 完成")
                     return "", history, word
             except Exception as e:
                 pass
-        progress(0.3, desc="⏳ AI 思考中...")
         try:
             response = agent.run(message)
         except Exception as e:
-            response = f"⚠️ AI 服务暂不可用（{str(e)}）。"
-            progress(1, desc="⚠️ 出错")
-            history.append({"role": "user", "content": message})
-            history.append({"role": "assistant", "content": response})
-            return "", history, ""
-        progress(1, desc="✅ 完成")
+            response = f"⚠️ AI 服务暂不可用（{str(e)}）。你可以继续使用查答案、翻译原文等不需要AI的功能。"
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": response})
         word = _extract_word(message)
@@ -283,40 +274,29 @@ def create_ui():
         return delete_word(word.strip()), refresh_vocab()
 
     # ── 作文批改 ────────────────────────────
-    def grade_essay(essay, level, progress=gr.Progress()):
-        progress(0, desc="⏳ 批改中...")
+    def grade_essay(essay, level):
         if not essay or not essay.strip():
-            progress(1, desc="完成")
             return "请粘贴你的作文"
         rule_result = check_essay(essay.strip(), level)
         try:
-            progress(0.5, desc="⏳ AI 深度分析中...")
             llm_result = check_essay_llm(essay.strip(), level)
             llm_report = format_essay_llm_report(llm_result)
-            progress(1, desc="✅ 完成")
             return rule_result + "\n\n" + llm_report
         except Exception as e:
-            progress(1, desc="⚠️ AI 暂不可用")
             return rule_result + f"\n\n⚠️ AI 深度评分暂不可用（{str(e)}），以上为规则评分结果。"
 
     # ── 翻译批改 ─────────────────────────────
-    def grade_translation(original, translation, progress=gr.Progress()):
-        progress(0, desc="⏳ 评分中...")
+    def grade_translation(original, translation):
         if not original or not original.strip():
-            progress(1, desc="完成")
             return "请填写中文原文"
         if not translation or not translation.strip():
-            progress(1, desc="完成")
             return "请填写英文译文"
         rule_result = evaluate_translation(original.strip(), translation.strip())
         try:
-            progress(0.5, desc="⏳ AI 深度分析中...")
             llm_result = evaluate_translation_llm(original.strip(), translation.strip())
             llm_report = format_llm_report(llm_result)
-            progress(1, desc="✅ 完成")
             return rule_result + "\n\n" + llm_report
         except Exception as e:
-            progress(1, desc="⚠️ AI 暂不可用")
             return rule_result + f"\n\n⚠️ AI 深度评分暂不可用（{str(e)}），以上为规则评分结果。"
 
     def grade_example(example_name):
