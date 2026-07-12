@@ -186,7 +186,7 @@ def create_ui():
     with gr.Blocks(title="四六级真题词典") as demo:
         gr.Markdown("""
         # 📖 四六级真题词典
-        <div class="tagline">收录 2016~2025 年四六级真题 · 查单词 · 改作文 · 对答案</div>
+        <div class="tagline">收录 2016~2025 年四六级真题 · 查单词 · 改作文 · 对答案 ⚡ v2.1</div>
         """)
 
         with gr.Tabs():
