@@ -72,9 +72,53 @@ def create_ui():
     agent = build_agent()
 
     # ── AI 问答 ─────────────────────────────
+    def _is_word_query(text):
+        """判断是否是查词请求"""
+        text = text.strip()
+        # 模式: "查一下 X" / "查查 X" / "X 在真题" / "X 这个词"
+        for pat in [r'查(?:一下|查)?\s+([a-zA-Z]+)', r'([a-zA-Z]+)\s+(?:在真题|这个词|的意思|的用法)']:
+            if re.search(pat, text):
+                return True
+        # 单个英文词
+        words = re.findall(r'[a-zA-Z]{2,}', text)
+        return len(words) == 1
+
     def chat_fn(message, history):
         if not message or not message.strip():
             return "", history, ""
+        # 查词请求直接走 word_lookup，不走 Agent（快很多）
+        if _is_word_query(message):
+            try:
+                word = _extract_word(message)
+                if word:
+                    result = word_lookup(word)
+                    # 格式化简单结果
+                    import json
+                    try:
+                        data = json.loads(result)
+                        if "error" in data:
+                            response = f"❌ {data['error']}"
+                        else:
+                            response = f"## 📖 {word}\n\n"
+                            sentences = data.get("sentences", [])
+                            if sentences:
+                                response += "### 📝 真题例句\n\n"
+                                for s in sentences[:5]:
+                                    exam = s.get("exam", "")
+                                    text = s.get("text", "")[:200]
+                                    response += f"- \"{text}\"\n  *出自：{exam}*\n\n"
+                            stats = data.get("stats", {})
+                            if stats:
+                                total = stats.get("total", 0)
+                                response += f"**📊 在真题中出现 {total} 次**\n\n"
+                    except (json.JSONDecodeError, KeyError):
+                        response = result
+                    history.append({"role": "user", "content": message})
+                    history.append({"role": "assistant", "content": response})
+                    return "", history, word
+            except Exception as e:
+                pass  # fallback to agent
+        # 复杂问题走 Agent（LLM）
         try:
             response = agent.run(message)
         except Exception as e:
