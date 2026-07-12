@@ -227,7 +227,7 @@ def create_ui():
                 essay_btn.click(grade_essay, [essay_input, level_dropdown], essay_output)
                 clear_essay_btn.click(lambda: ("", ""), None, [essay_input, essay_output])
 
-            # ── Tab 3: 翻译批改 ──
+            # ── Tab 3: 翻译批改 + 参考译文 ──
             with gr.Tab("📝 翻译批改"):
                 gr.Markdown("### 六级翻译评分标准")
                 gr.Markdown("按 **信达雅** 三方面评分，满分 **15 分**。填入中文原文和你的英文译文，AI 自动评分。")
@@ -245,7 +245,6 @@ def create_ui():
                     example_btn1 = gr.Button("🌾 乡村振兴")
                     example_btn2 = gr.Button("📉 中档译文")
                     example_btn3 = gr.Button("🤖 人工智能")
-                # Enter 提交
                 original_input.submit(grade_translation, [original_input, translation_input], grade_output)
                 translation_input.submit(grade_translation, [original_input, translation_input], grade_output)
                 grade_btn.click(grade_translation, [original_input, translation_input], grade_output)
@@ -254,16 +253,16 @@ def create_ui():
                 example_btn2.click(lambda: grade_example("中档译文"), None, [original_input, translation_input])
                 example_btn3.click(lambda: grade_example("人工智能"), None, [original_input, translation_input])
 
-            # ── Tab 4: 翻译原文与参考译文 ──
-            from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
-            trans_exam_choices = [(e, e) for e in list_trans_exams()]
-            def lookup_translation_dd(exam):
-                if not exam:
-                    return "请选择考试"
-                return get_translation(exam)
-            with gr.Tab("📜 翻译原文"):
-                gr.Markdown("### 查询六级翻译真题原文与参考译文")
-                gr.Markdown("收录 **2016~2025 年共 52 套** 六级翻译真题的原文和参考译文。在下拉框中输入年份或关键词筛选。")
+                # ── 参考译文（原 Tab 4 合并进来）──
+                gr.Markdown("---")
+                gr.Markdown("### 📖 参考译文")
+                gr.Markdown("批改完成后，选择对应考试查看官方参考译文：")
+                from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
+                trans_exam_choices = [(e, e) for e in list_trans_exams()]
+                def lookup_translation_dd(exam):
+                    if not exam:
+                        return "请选择考试"
+                    return get_translation(exam)
                 with gr.Row():
                     trans_exam_dd = gr.Dropdown(
                         choices=trans_exam_choices,
@@ -274,7 +273,7 @@ def create_ui():
                 trans_output = gr.Markdown(elem_classes="result-box markdown-output")
                 trans_exam_dd.input(lookup_translation_dd, trans_exam_dd, trans_output)
 
-            # ── Tab 5: 查答案 ──
+            # ── Tab 4: 查答案 ──
             answer_exam_choices = [(e, e) for e in list_available_exams()]
             def lookup_answers_dd(exam, section):
                 if not exam:
@@ -298,7 +297,7 @@ def create_ui():
                 answer_exam_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
                 answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
 
-            # ── Tab 6: 生词本 ──
+            # ── Tab 5: 生词本 ──
             with gr.Tab("📚 生词本") as vocab_tab:
                 gr.Markdown("### 收藏的单词")
                 gr.Markdown("在「📖 真题词典」中查单词时，点击 ⭐ 收藏。也可以直接在这里添加/删除。")
