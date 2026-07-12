@@ -28,8 +28,8 @@ h1 { font-size: 2rem !important; margin-bottom: 0.3rem !important; }
 textarea { width: 100% !important; }
 /* 行内间距 */
 .gr-row { gap: 0.8rem !important; }
-/* 隐藏 Gradio 的冗余 footer */
-footer { display: none !important; }
+/* 右边模板面板固定高度，超出滚动 */
+.right-panel .result-box { max-height: 520px !important; overflow-y: auto !important; }
 .result-box {
     border-left: 4px solid #4f86c6; padding: 0.8rem 1rem;
     background: #16213e !important; border-radius: 0 8px 8px 0;
