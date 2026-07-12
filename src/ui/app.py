@@ -217,61 +217,53 @@ def create_ui():
                 star_btn.click(toggle_star, [word_label, star_btn], [star_btn, word_label, star_status])
                 clear_btn.click(clear_fn, None, [chatbot, msg, word_label])
 
-            # ── Tab 2: 作文批改 ──
+            # ── Tab 2: 作文批改 + 模板（左右分栏）──
+            tpl_levels = ["cet4", "cet6", "通用"]
+            tpl_level_labels = {"cet4": "四级 CET-4", "cet6": "六级 CET-6", "通用": "通用"}
+            def get_tpl_types(level):
+                return tpl_list_types(level)
+            def show_template(level, type_name):
+                if not level or not type_name:
+                    return "请选择级别和类型"
+                return format_template_preview(level, type_name)
             with gr.Tab("✍️ 作文"):
-                gr.Markdown("### 把你的作文贴进来，一键批改")
-                gr.Markdown("按四六级官方评分标准（满分15分），自动评分并给出建议。")
-                with gr.Row():
+                with gr.Row(equal_height=False):
                     with gr.Column(scale=7):
-                        essay_input = gr.Textbox(label="你的作文", placeholder="把你的作文全文粘贴到这里...", lines=12)
-                    with gr.Column(scale=3):
+                        gr.Markdown("### ✍️ 批改")
+                        essay_input = gr.Textbox(label="你的作文", placeholder="把你的作文全文粘贴到这里...", lines=10)
                         level_dropdown = gr.Dropdown(
                             choices=[("四级 CET-4", "cet4"), ("六级 CET-6", "cet6")],
-                            value="cet6", label="考试级别", info="选择你备考的级别"
+                            value="cet6", label="考试级别"
                         )
-                with gr.Row():
-                    essay_btn = gr.Button("📊 开始批改", variant="primary", size="lg")
-                    clear_essay_btn = gr.Button("🗑️ 清空", size="lg")
-                essay_output = gr.Markdown(label="批改结果", elem_classes="result-box markdown-output")
-                gr.Examples(
-                    examples=[
-                        ["Nowadays, more and more people believe that environmental protection is crucial for our future. With the rapid development of industry, the pollution problem has become increasingly serious. We should take immediate action to protect our planet.", "cet6"],
-                    ],
-                    inputs=[essay_input, level_dropdown], label="📝 试一个例子"
-                )
-                # Enter 提交
-                essay_input.submit(grade_essay, [essay_input, level_dropdown], essay_output)
-                essay_btn.click(grade_essay, [essay_input, level_dropdown], essay_output)
-                clear_essay_btn.click(lambda: ("", ""), None, [essay_input, essay_output])
+                        with gr.Row():
+                            essay_btn = gr.Button("📊 开始批改", variant="primary", size="lg")
+                            clear_essay_btn = gr.Button("🗑️ 清空", size="lg")
+                        essay_output = gr.Markdown(elem_classes="result-box markdown-output")
+                        gr.Examples(
+                            examples=[["Nowadays, more and more people believe that environmental protection is crucial for our future. With the rapid development of industry, the pollution problem has become increasingly serious. We should take immediate action to protect our planet.", "cet6"]],
+                            inputs=[essay_input, level_dropdown], label="📝 试一个例子"
+                        )
+                        essay_input.submit(grade_essay, [essay_input, level_dropdown], essay_output)
+                        essay_btn.click(grade_essay, [essay_input, level_dropdown], essay_output)
+                        clear_essay_btn.click(lambda: ("", ""), None, [essay_input, essay_output])
 
-                # ── 作文模板 ──
-                gr.Markdown("---")
-                gr.Markdown("### 📝 作文模板")
-                gr.Markdown("选择级别和作文类型，查看模板句式和完整范文：")
-                tpl_levels = ["cet4", "cet6", "通用"]
-                tpl_level_labels = {"cet4": "四级 CET-4", "cet6": "六级 CET-6", "通用": "通用"}
-                def get_tpl_types(level):
-                    return tpl_list_types(level)
-                def show_template(level, type_name):
-                    if not level or not type_name:
-                        return "请选择级别和类型"
-                    return format_template_preview(level, type_name)
-                with gr.Row():
-                    tpl_level_dd = gr.Dropdown(
-                        choices=[(tpl_level_labels[l], l) for l in tpl_levels],
-                        value="cet6", label="级别"
-                    )
-                    tpl_type_dd = gr.Dropdown(
-                        choices=[(t, t) for t in get_tpl_types("cet6")],
-                        label="作文类型", value=get_tpl_types("cet6")[0] if get_tpl_types("cet6") else None
-                    )
-                tpl_output = gr.Markdown(elem_classes="result-box markdown-output")
-                tpl_level_dd.change(
-                    fn=lambda l: gr.Dropdown(choices=[(t, t) for t in get_tpl_types(l)]),
-                    inputs=tpl_level_dd, outputs=tpl_type_dd
-                )
-                tpl_level_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
-                tpl_type_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
+                    with gr.Column(scale=5):
+                        gr.Markdown("### 📝 模板")
+                        tpl_level_dd = gr.Dropdown(
+                            choices=[(tpl_level_labels[l], l) for l in tpl_levels],
+                            value="cet6", label="级别"
+                        )
+                        tpl_type_dd = gr.Dropdown(
+                            choices=[(t, t) for t in get_tpl_types("cet6")],
+                            label="作文类型", value=get_tpl_types("cet6")[0] if get_tpl_types("cet6") else None
+                        )
+                        tpl_output = gr.Markdown(elem_classes="result-box markdown-output")
+                        tpl_level_dd.change(
+                            fn=lambda l: gr.Dropdown(choices=[(t, t) for t in get_tpl_types(l)]),
+                            inputs=tpl_level_dd, outputs=tpl_type_dd
+                        )
+                        tpl_level_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
+                        tpl_type_dd.input(show_template, [tpl_level_dd, tpl_type_dd], tpl_output)
 
             # ── Tab 3: 翻译批改 + 参考译文 ──
             with gr.Tab("📝 翻译批改"):
