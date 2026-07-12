@@ -111,6 +111,12 @@ KEY_TERMS = {
     "湿地": "wetland",
     "森林": "forest",
     "生物多样性": "biodiversity",
+    # ── 节日/习俗 ──
+    "团圆": "reunion",
+    "赏月": "admire the moon|enjoy the moon",
+    "月饼": "mooncake|moon cake",
+    "灯笼": "lantern",
+    "团圆饭": "family reunion dinner",
     # ── 形容词/高频表达 ──
     "辉煌": "glorious",
     "悠久": "long-standing",
@@ -370,10 +376,12 @@ def _check_keyword_accuracy(original, translation, issues, suggestions):
     trans_lower = translation.lower()
     for cn_term, en_term in sorted(KEY_TERMS.items(), key=lambda x: -len(x[0])):
         if cn_term in original:
-            # 逐个检查英文词是否出现在译文中
-            en_words = en_term.split(" / ")
+            en_words = re.split(r'\s*/\s*|\|', en_term)
             any_found = False
             for ew in en_words:
+                ew = ew.strip()
+                if not ew:
+                    continue
                 ew_parts = ew.lower().split()
                 if all(part in trans_lower for part in ew_parts):
                     any_found = True
@@ -432,10 +440,13 @@ def _check_cn_en_integrity(original, translation):
         match_count = 0
         missing_here = []
         for cn_w, en_pat in found_terms.items():
-            # 英文可能是多个选项（用 / 分隔）
-            en_opts = en_pat.split(" / ") if " / " in en_pat else [en_pat]
+            # 英文可能是多个选项（用 / 或 | 分隔）
+            en_opts = re.split(r'\s*/\s*|\|', en_pat)
             any_match = False
             for opt in en_opts:
+                opt = opt.strip()
+                if not opt:
+                    continue
                 opt_parts = opt.lower().split()
                 if all(p in trans_lower for p in opt_parts):
                     any_match = True
