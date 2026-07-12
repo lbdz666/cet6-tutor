@@ -465,21 +465,78 @@ def create_ui():
                 answer_exam_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
                 answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
 
-            # ── Tab 5: 生词本 ──
+            # ── Tab 5: 生词本（列表 + 复习左右分栏）──
             with gr.Tab("📚 生词本") as vocab_tab:
-                gr.Markdown("### 收藏的单词")
-                gr.Markdown("在「📖 真题词典」中查单词时，点击 ⭐ 收藏。也可以直接在这里添加/删除。")
-                with gr.Row():
-                    vocab_input = gr.Textbox(label="单词", placeholder="输入单词，如 economy", scale=4)
-                    vocab_add_btn = gr.Button("➕ 收藏", variant="primary", scale=1)
-                    vocab_del_btn = gr.Button("🗑️ 删除", scale=1)
-                vocab_status = gr.Markdown("")
-                vocab_list = gr.Markdown(refresh_vocab())
-                # 切换到本标签页时自动刷新列表
-                vocab_tab.select(refresh_vocab, None, vocab_list)
-                vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_list])
-                vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_list])
-                vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_list])
+                with gr.Row(equal_height=False):
+                    with gr.Column(scale=6):
+                        gr.Markdown("### 📋 单词列表")
+                        gr.Markdown("在「📖 真题词典」中查单词时，点击 ⭐ 收藏。也可以直接在这里添加/删除。")
+                        with gr.Row():
+                            vocab_input = gr.Textbox(label="单词", placeholder="输入单词，如 economy", scale=4)
+                            vocab_add_btn = gr.Button("➕ 收藏", variant="primary", scale=1)
+                            vocab_del_btn = gr.Button("🗑️ 删除", scale=1)
+                        vocab_status = gr.Markdown("")
+                        vocab_list = gr.Markdown(refresh_vocab())
+                        vocab_tab.select(refresh_vocab, None, vocab_list)
+                        vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_list])
+                        vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_list])
+                        vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_list])
+
+                    with gr.Column(scale=6, elem_classes="right-panel"):
+                        gr.Markdown("### 🔄 闪卡复习")
+                        word_idx = gr.State(0)
+                        show_def = gr.State(False)
+
+                        def get_card(idx, show):
+                            words = get_words_list()
+                            if not words:
+                                return "📭 还没有收藏单词，先去查单词并收藏吧！", "", ""
+                            if idx >= len(words):
+                                idx = 0
+                            w = words[idx]
+                            word_text = f"## **{w['word']}**"
+                            if show:
+                                defn = w.get('definition', '').replace('\n', '  \n')
+                                return word_text, defn, f"{idx+1}/{len(words)}"
+                            return word_text, "点击「显示释义」查看", f"{idx+1}/{len(words)}"
+
+                        def next_word(idx, show):
+                            words = get_words_list()
+                            if not words:
+                                return 0, False, "📭", "", ""
+                            nxt = (idx + 1) % len(words)
+                            w = words[nxt]
+                            word_text = f"## **{w['word']}**"
+                            prog = f"{nxt+1}/{len(words)}"
+                            return nxt, False, word_text, "点击「显示释义」查看", prog
+
+                        def reveal_def(idx):
+                            words = get_words_list()
+                            if not words or idx >= len(words):
+                                return "释义加载中..."
+                            w = words[idx]
+                            return w.get('definition', '暂无释义').replace('\n', '  \n')
+
+                        card_word = gr.Markdown("## **✨**")
+                        card_def = gr.Markdown("*收藏单词后开始复习*", elem_classes="result-box")
+                        card_progress = gr.Markdown("")
+
+                        gr.Markdown("")
+                        with gr.Row():
+                            show_btn = gr.Button("👁️ 显示释义", variant="primary", size="lg")
+                            next_btn = gr.Button("⏭️ 下一个", size="lg")
+                        # 初始化
+                        vocab_tab.select(
+                            fn=lambda: get_card(0, False),
+                            outputs=[card_word, card_def, card_progress]
+                        )
+                        show_btn.click(
+                            fn=reveal_def, inputs=word_idx, outputs=card_def
+                        )
+                        next_btn.click(
+                            fn=next_word, inputs=[word_idx, show_def],
+                            outputs=[word_idx, show_def, card_word, card_def, card_progress]
+                        )
 
     return demo
 
