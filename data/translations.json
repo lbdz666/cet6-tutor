@@ -1,6 +1,6 @@
 {
   "description": "六级翻译真题原文与参考译文（2016~2025年）",
-  "total": 52,
+  "total": 61,
   "translations": {
     "2025年6月第3套cet6": [
       {
@@ -364,6 +364,69 @@
         "topic": "红色",
         "chinese": "在中国文化中，红色通常象征着吉祥、幸福和繁荣。红色在春节和其他喜庆场合被广泛使用。人们会贴红对联，挂红灯笼，发红包。红色在中国婚礼中也扮演着重要角色，新娘通常穿着红色的婚纱。在传统观念中，红色可以驱邪避灾，给人们带来好运。此外，红色也是中国国旗的主色调，象征着革命和进步。如今，红色已经成为了中国文化中不可或缺的一部分，深深融入了人们的日常生活。",
         "english": "In Chinese culture, red usually symbolizes good luck, happiness and prosperity. Red is widely used during the Spring Festival and other festive occasions. People paste red couplets, hang red lanterns, and give red envelopes. Red also plays an important role in Chinese weddings, where brides typically wear red wedding dresses. According to traditional beliefs, red can ward off evil spirits and bring good fortune to people. In addition, red is the dominant color of the Chinese national flag, symbolizing revolution and progress. Nowadays, red has become an indispensable part of Chinese culture, deeply integrated into people's daily lives."
+      }
+    ],
+    "2023年6月第1套cet4": [
+      {
+        "topic": "城市化",
+        "chinese": "近年来，中国城市化进程不断加快。越来越多的人从农村迁往城市，城市的规模也在不断扩大。城市化给人们带来了更好的生活条件和更多的工作机会。同时，城市化也带来了一些挑战，比如交通拥堵和环境污染。政府正在采取措施解决这些问题，努力建设更加宜居的城市。",
+        "english": "In recent years, China's urbanization process has been accelerating. More and more people are moving from rural areas to cities, and the scale of cities is constantly expanding. Urbanization has brought people better living conditions and more job opportunities. At the same time, urbanization also brings some challenges, such as traffic congestion and environmental pollution. The government is taking measures to solve these problems and striving to build more livable cities."
+      }
+    ],
+    "2023年6月第2套cet4": [
+      {
+        "topic": "基础设施建设",
+        "chinese": "中国的基础设施建设取得了巨大成就。高速铁路网覆盖了全国大部分地区，使人们的出行变得更加便捷。新的机场和港口不断建成，促进了国际贸易的发展。此外，5G网络和数字基础设施的建设也走在了世界前列。这些成就不仅改善了中国人的生活，也为经济发展提供了强有力的支撑。",
+        "english": "China has made great achievements in infrastructure construction. The high-speed railway network covers most parts of the country, making people's travel more convenient. New airports and ports are constantly being built, promoting the development of international trade. In addition, the construction of 5G networks and digital infrastructure is also leading the world. These achievements have not only improved the lives of Chinese people, but also provided strong support for economic development."
+      }
+    ],
+    "2023年6月第3套cet4": [
+      {
+        "topic": "养老金",
+        "chinese": "中国的养老保障体系正在不断完善。随着人口老龄化问题的加剧，政府加大了对养老服务的投入。越来越多的老年人能够享受到基本养老金和医疗保障。各地还建立了社区养老服务中心，为老年人提供日间照料和娱乐活动。这些措施有效提高了老年人的生活质量。",
+        "english": "China's old-age security system is being continuously improved. With the intensification of the aging population problem, the government has increased its investment in elderly care services. More and more elderly people are able to enjoy basic pensions and medical insurance. Community elderly care service centers have also been established in various places, providing daytime care and recreational activities for the elderly. These measures have effectively improved the quality of life for the elderly."
+      }
+    ],
+    "2023年12月第1套cet4": [
+      {
+        "topic": "改革开放",
+        "chinese": "改革开放是中国现代化进程中的重要里程碑。自1978年以来，中国经济取得了举世瞩目的成就。改革推动了市场经济的发展，开放促进了国际贸易和投资。中国人民的生活水平显著提高，贫困人口大幅减少。改革开放不仅改变了中国，也深刻影响了世界。",
+        "english": "Reform and opening-up is an important milestone in China's modernization process. Since 1978, China's economy has achieved remarkable accomplishments that have attracted worldwide attention. Reform has promoted the development of the market economy, while opening-up has facilitated international trade and investment. The living standards of the Chinese people have significantly improved, and the number of people in poverty has greatly decreased. Reform and opening-up has not only changed China but also profoundly influenced the world."
+      }
+    ],
+    "2023年12月第2套cet4": [
+      {
+        "topic": "小康社会",
+        "chinese": "中国已经全面建成小康社会，这是中华民族发展史上的一个重要里程碑。在过去几十年里，数亿人口摆脱了贫困，人民生活水平显著提高。城乡居民收入持续增长，社会保障体系更加健全。教育、医疗、住房等民生问题得到有效改善。全面建设小康社会的目标已经实现。",
+        "english": "China has completed the building of a moderately prosperous society in all respects, which is an important milestone in the development history of the Chinese nation. Over the past few decades, hundreds of millions of people have been lifted out of poverty, and people's living standards have significantly improved. The income of urban and rural residents has continued to grow, and the social security system has become more complete. Livelihood issues such as education, healthcare, and housing have been effectively improved. The goal of building a moderately prosperous society in all respects has been achieved."
+      }
+    ],
+    "2023年12月第3套cet4": [
+      {
+        "topic": "教育发展",
+        "chinese": "中国高度重视教育事业的发展。国家对教育的投入逐年增加，教育公平不断推进。九年义务教育全面普及，高等教育毛入学率持续提高。职业教育也得到快速发展，为各行各业培养了大量的技术人才。教育事业的发展为国家现代化建设提供了强有力的人才支撑和智力支持。",
+        "english": "China attaches great importance to the development of education. The state's investment in education has increased year by year, and educational equity has been continuously promoted. Nine-year compulsory education has been fully popularized, and the gross enrollment rate of higher education has continued to rise. Vocational education has also developed rapidly, cultivating a large number of technical talents for various industries. The development of education has provided strong talent support and intellectual support for the country's modernization."
+      }
+    ],
+    "2024年6月第1套cet4": [
+      {
+        "topic": "人工智能",
+        "chinese": "人工智能技术在中国得到了广泛应用。从智能手机到智能家居，从自动驾驶到医疗诊断，AI正在改变人们的生活方式。许多中国企业正在积极研发AI技术，推动产业升级。同时，政府也制定了相关政策，规范AI的发展和应用。人工智能正在成为推动中国经济发展的重要力量。",
+        "english": "Artificial intelligence technology has been widely applied in China. From smartphones to smart homes, from autonomous driving to medical diagnosis, AI is changing people's lifestyles. Many Chinese companies are actively developing AI technologies to promote industrial upgrading. At the same time, the government has also formulated relevant policies to regulate the development and application of AI. Artificial intelligence is becoming an important force driving China's economic development."
+      }
+    ],
+    "2024年6月第2套cet4": [
+      {
+        "topic": "数字经济",
+        "chinese": "中国的数字经济正在快速发展。电子商务、移动支付、在线教育等数字产业蓬勃发展，深刻改变了人们的生活和消费方式。数字经济已经成为中国经济增长的新引擎。越来越多传统企业开始数字化转型，提高了生产效率和竞争力。中国政府积极推动数字经济发展，为创新型企业创造了良好的政策环境。",
+        "english": "China's digital economy is developing rapidly. Digital industries such as e-commerce, mobile payment, and online education are flourishing, profoundly changing people's lifestyles and consumption patterns. The digital economy has become a new engine for China's economic growth. More and more traditional enterprises are starting digital transformation, improving production efficiency and competitiveness. The Chinese government actively promotes the development of the digital economy, creating a favorable policy environment for innovative enterprises."
+      }
+    ],
+    "2024年6月第3套cet4": [
+      {
+        "topic": "科技创新",
+        "chinese": "中国在科技创新方面取得了显著成就。在航天领域，中国的载人航天工程和月球探测项目不断取得新突破。在通信技术领域，5G技术的研发和应用处于世界领先地位。在新能源领域，中国已经成为全球最大的新能源汽车市场。科技创新不仅推动了经济发展，也改善了人民的生活质量。",
+        "english": "China has made remarkable achievements in scientific and technological innovation. In the space field, China's manned space program and lunar exploration projects continue to make new breakthroughs. In the field of communication technology, the research and application of 5G technology are at the world's leading level. In the field of new energy, China has become the world's largest market for new energy vehicles. Scientific and technological innovation has not only promoted economic development but also improved people's quality of life."
       }
     ]
   }
