@@ -58,10 +58,12 @@ def create_ui():
     def chat_fn(message, history):
         if not message or not message.strip():
             return "", history, ""
-        response = agent.run(message)
+        try:
+            response = agent.run(message)
+        except Exception as e:
+            response = f"⚠️ AI 服务暂不可用（{str(e)}）。你可以继续使用查答案、翻译原文等不需要AI的功能。"
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": response})
-        # 从查询中提取单词
         word = _extract_word(message)
         return "", history, word
 
