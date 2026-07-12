@@ -91,12 +91,6 @@ def create_ui():
             return ex["original"], ex["translation"]
         return "", ""
 
-    # ── 查答案 ─────────────────────────────
-    def lookup_answers(exam, section):
-        if not exam or not exam.strip():
-            return "请输入考试名称（如：2023年6月第1套cet6）"
-        return format_exam_answers(exam.strip(), section)
-
     # ── 构建界面 ─────────────────────────────
     with gr.Blocks(title="四六级真题词典") as demo:
         gr.Markdown("""
@@ -200,46 +194,28 @@ def create_ui():
                 trans_exam_dd.input(lookup_translation_dd, trans_exam_dd, trans_output)
 
             # ── Tab 5: 查答案 ──
+            answer_exam_choices = [(e, e) for e in list_available_exams()]
+            def lookup_answers_dd(exam, section):
+                if not exam:
+                    return "请选择考试"
+                return format_exam_answers(exam, section)
+            with gr.Tab("📋 查答案"):
                 gr.Markdown("### 查询六级真题阅读答案")
-                gr.Markdown("支持 **2023~2025 年 18 套六级** 阅读答案。点击下方考试名称快速查询，或手动输入。")
-
+                gr.Markdown("支持 **2023~2025 年 18 套六级** 阅读答案。选择考试后自动出结果。")
                 with gr.Row():
-                    with gr.Column(scale=7):
-                        exam_input = gr.Textbox(
-                            label="考试名称",
-                            placeholder="例如：2023年6月第1套cet6",
-                            info="支持精确查询或模糊搜索（如'2023年6月'）"
-                        )
-                    with gr.Column(scale=3):
-                        section_dropdown = gr.Dropdown(
-                            choices=[("全部题型", "all"), ("Section A 选词填空", "cloze"), ("Section B 长篇阅读匹配", "sectionB"), ("Section C 仔细阅读", "reading")],
-                            value="all", label="题型筛选"
-                        )
-                with gr.Row():
-                    answer_btn = gr.Button("🔍 查询答案", variant="primary", size="lg")
-                    clear_answer_btn = gr.Button("🗑️ 清空", size="lg")
-
-                # 结果卡片 — 放在快捷按钮上方，查询后直接显示在这里
-                answer_output = gr.Markdown(label="查询结果", elem_classes="result-box markdown-output")
-
-                # 快捷按钮（点击直接查询）
-                gr.Markdown("##### 📌 快捷查询（点击直达）：")
-                available = list_available_exams()
-                # 分两行显示
-                for row_start in range(0, len(available), 6):
-                    row_exams = available[row_start:row_start + 6]
-                    with gr.Row():
-                        for exam_name in row_exams:
-                            btn = gr.Button(f"📄 {exam_name}", size="sm")
-                            btn.click(
-                                fn=lambda e=exam_name: [gr.update(value=e), format_exam_answers(e, "all")],
-                                outputs=[exam_input, answer_output]
-                            )
-
-                # Enter 提交 + 按钮提交
-                exam_input.submit(lookup_answers, [exam_input, section_dropdown], answer_output)
-                answer_btn.click(lookup_answers, [exam_input, section_dropdown], answer_output)
-                clear_answer_btn.click(lambda: ("", ""), None, [exam_input, answer_output])
+                    answer_exam_dd = gr.Dropdown(
+                        choices=answer_exam_choices,
+                        label="选择考试",
+                        info="输入年份快速筛选（如 2023）",
+                        scale=7
+                    )
+                    answer_section_dd = gr.Dropdown(
+                        choices=[("全部题型", "all"), ("Section A 选词填空", "cloze"), ("Section B 长篇阅读匹配", "sectionB"), ("Section C 仔细阅读", "reading")],
+                        value="all", label="题型筛选", scale=3
+                    )
+                answer_output = gr.Markdown(elem_classes="result-box markdown-output")
+                answer_exam_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
+                answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
 
     return demo
 
