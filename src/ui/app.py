@@ -280,9 +280,12 @@ def create_ui():
                 words = get_words_list()
                 if not words:
                     return "📭 生词本为空，查单词时在聊天框输入「收藏 economy」即可保存"
-                lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 收藏时间 |", "|---|------|----------|"]
+                lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 中文释义 | 收藏时间 |", "|---|------|----------|----------|"]
                 for i, w in enumerate(words, 1):
-                    lines.append(f"| {i} | **{w['word']}** | {w.get('saved_at', '?')} |")
+                    word = w['word']
+                    defn = w.get('definition', '')[:50].replace('\n', ' ') if w.get('definition') else ''
+                    saved = w.get('saved_at', '?')
+                    lines.append(f"| {i} | **{word}** | {defn} | {saved} |")
                 return "\n".join(lines)
 
             def vocab_add(word):
