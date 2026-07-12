@@ -181,39 +181,23 @@ def create_ui():
 
             # ── Tab 4: 翻译原文与参考译文 ──
             from src.tools.translation_lookup import get_translation, list_available_exams as list_trans_exams
-            def lookup_translation(exam):
-                if not exam or not exam.strip():
-                    return "请输入考试名称"
-                return get_translation(exam.strip())
+            trans_exam_choices = [(e, e) for e in list_trans_exams()]
+            def lookup_translation_dd(exam):
+                if not exam:
+                    return "请选择考试"
+                return get_translation(exam)
             with gr.Tab("📜 翻译原文"):
                 gr.Markdown("### 查询六级翻译真题原文与参考译文")
-                gr.Markdown("收录近十年六级翻译真题的**中文原文**和**官方参考译文**，方便对照学习。")
-
+                gr.Markdown("收录 **2016~2025 年共 52 套** 六级翻译真题的原文和参考译文。在下拉框中输入年份或关键词筛选。")
                 with gr.Row():
-                    trans_exam_input = gr.Textbox(
-                        label="考试名称",
-                        placeholder="例如：2023年6月第1套cet6",
-                        info="支持模糊搜索（如 '2023年6月'）"
+                    trans_exam_dd = gr.Dropdown(
+                        choices=trans_exam_choices,
+                        label="选择考试",
+                        info="输入年份快速筛选（如 2023）",
+                        interactive=True
                     )
-                with gr.Row():
-                    trans_query_btn = gr.Button("🔍 查询翻译原文", variant="primary", size="lg")
-                    trans_clear_btn = gr.Button("🗑️ 清空", size="lg")
-                trans_output = gr.Markdown(label="查询结果", elem_classes="result-box markdown-output")
-
-                gr.Markdown("##### 📌 快捷查询：")
-                exams_avail = list_trans_exams()
-                for row_start in range(0, len(exams_avail), 4):
-                    row_items = exams_avail[row_start:row_start + 4]
-                    with gr.Row():
-                        for en in row_items:
-                            btn = gr.Button(f"📄 {en}", size="sm")
-                            btn.click(
-                                fn=lambda e=en: [gr.update(value=e), get_translation(e)],
-                                outputs=[trans_exam_input, trans_output]
-                            )
-                trans_exam_input.submit(lookup_translation, trans_exam_input, trans_output)
-                trans_query_btn.click(lookup_translation, trans_exam_input, trans_output)
-                trans_clear_btn.click(lambda: ("", ""), None, [trans_exam_input, trans_output])
+                trans_output = gr.Markdown(elem_classes="result-box markdown-output")
+                trans_exam_dd.input(lookup_translation_dd, trans_exam_dd, trans_output)
 
             # ── Tab 5: 查答案 ──
                 gr.Markdown("### 查询六级真题阅读答案")
