@@ -9,6 +9,7 @@ from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
 from src.tools.exam_tools import check_essay, ESSAY_CHECK_TOOL
 from src.tools.translation_eval import evaluate_translation, TRANSLATION_EVAL_TOOL
 from src.tools.translation_eval_llm import evaluate_translation_llm, format_llm_report, TRANSLATION_EVAL_LLM_TOOL
+from src.tools.exam_tools_llm import check_essay_llm, format_essay_llm_report, ESSAY_CHECK_LLM_TOOL
 from src.tools.translation_lookup import get_translation, TRANSLATION_LOOKUP_TOOL
 from src.tools.answer_lookup import format_exam_answers, list_available_exams, ANSWER_LOOKUP_TOOL
 
@@ -38,6 +39,7 @@ def build_agent() -> ReActAgent:
     registry.register(Tool(name=TRANSLATION_EVAL_TOOL["name"], description=TRANSLATION_EVAL_TOOL["description"], fn=evaluate_translation, parameters=TRANSLATION_EVAL_TOOL["parameters"]))
     registry.register(Tool(name=ANSWER_LOOKUP_TOOL["name"], description=ANSWER_LOOKUP_TOOL["description"], fn=format_exam_answers, parameters=ANSWER_LOOKUP_TOOL["parameters"]))
     registry.register(Tool(name=TRANSLATION_EVAL_LLM_TOOL["name"], description=TRANSLATION_EVAL_LLM_TOOL["description"], fn=evaluate_translation_llm, parameters=TRANSLATION_EVAL_LLM_TOOL["parameters"]))
+    registry.register(Tool(name=ESSAY_CHECK_LLM_TOOL["name"], description=ESSAY_CHECK_LLM_TOOL["description"], fn=check_essay_llm, parameters=ESSAY_CHECK_LLM_TOOL["parameters"]))
     registry.register(Tool(name=TRANSLATION_LOOKUP_TOOL["name"], description=TRANSLATION_LOOKUP_TOOL["description"], fn=get_translation, parameters=TRANSLATION_LOOKUP_TOOL["parameters"]))
     return ReActAgent(registry=registry)
 
@@ -62,7 +64,13 @@ def create_ui():
     def grade_essay(essay, level):
         if not essay or not essay.strip():
             return "请粘贴你的作文"
-        return check_essay(essay.strip(), level)
+        rule_result = check_essay(essay.strip(), level)
+        try:
+            llm_result = check_essay_llm(essay.strip(), level)
+            llm_report = format_essay_llm_report(llm_result)
+            return rule_result + "\n\n" + llm_report
+        except Exception as e:
+            return rule_result + f"\n\n⚠️ AI 深度评分暂不可用（{str(e)}），以上为规则评分结果。"
 
     # ── 翻译批改 ─────────────────────────────
     def grade_translation(original, translation):
