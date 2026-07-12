@@ -25,15 +25,31 @@ body { background: #0f0f23 !important; margin: 0 !important; }
   padding: 0 1.5rem !important;
   background: transparent !important;
 }
-h1 { font-size: 2rem !important; margin-bottom: 0.2rem !important;
+h1 { font-size: 2rem !important; margin-bottom: 0.3rem !important;
   background: linear-gradient(135deg, #e8e8ff 0%, #4f86c6 100%);
   -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important;
   display: inline-block; }
 .tagline { color: #8899bb !important; font-size: 0.95rem; margin-bottom: 1.5rem; letter-spacing: 0.3px; }
 
+/* ── 数据仪表盘卡片 ── */
+.stats-row { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.stat-card {
+  flex: 1; min-width: 120px;
+  background: rgba(21, 21, 53, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(79,134,198,0.15);
+  border-radius: 12px; padding: 14px 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(79,134,198,0.4); }
+.stat-num { font-size: 1.5rem; font-weight: 700; color: #4f86c6 !important; }
+.stat-label { font-size: 0.78rem; color: #8899bb !important; margin-top: 2px; }
+
 /* ── 输入框 ── */
 textarea, input[type="text"], input[type="search"], .gr-dropdown select {
-  background: #1a1a3e !important; border: 1px solid #2a2a5e !important;
+  background: rgba(26, 26, 62, 0.8) !important;
+  border: 1px solid rgba(42, 42, 94, 0.8) !important;
   border-radius: 10px !important; color: #e0e0f0 !important;
   padding: 10px 14px !important; transition: all 0.25s ease !important;
   font-size: 0.95rem !important;
@@ -48,11 +64,11 @@ button, .gr-button {
   border-radius: 10px !important; border: none !important;
   font-weight: 600 !important; letter-spacing: 0.3px !important;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  cursor: pointer !important; position: relative !important; overflow: hidden !important;
+  cursor: pointer !important;
 }
 button:active { transform: scale(0.96) !important; }
 button:hover { filter: brightness(1.15) !important; }
-button[variant="primary"], .lg.svelte-1l7lw7j {
+button[variant="primary"] {
   background: linear-gradient(135deg, #4f86c6 0%, #3a6fa5 100%) !important;
   color: white !important; box-shadow: 0 4px 15px rgba(79,134,198,0.3) !important;
 }
@@ -61,8 +77,8 @@ button[variant="primary"]:hover {
   transform: translateY(-1px) !important;
 }
 button:not([variant]):not(.star-btn) {
-  background: #1e1e48 !important; color: #b0b8d0 !important;
-  border: 1px solid #2a2a5e !important;
+  background: rgba(30, 30, 72, 0.8) !important; color: #b0b8d0 !important;
+  border: 1px solid rgba(42, 42, 94, 0.8) !important;
 }
 button:not([variant]):not(.star-btn):hover {
   background: #2a2a5e !important; color: #e0e0f0 !important;
@@ -75,7 +91,7 @@ button[role="tab"] {
   font-size: 0.9rem !important; padding: 10px 18px !important;
   background: transparent !important; color: #8899bb !important;
   border-bottom: 2px solid transparent !important;
-  border-radius: 0 !important; transition: all 0.25s ease !important;
+  border-radius: 0 !important; transition: all 0.3s ease !important;
   margin: 0 1px !important;
 }
 button[role="tab"]:hover { color: #c0d0f0 !important; background: rgba(79,134,198,0.08) !important; }
@@ -84,32 +100,39 @@ button[role="tab"][aria-selected="true"] {
   background: rgba(79,134,198,0.1) !important;
 }
 
-/* ── 结果卡片 ── */
+/* ── 结果卡片（毛玻璃） ── */
 .result-box {
   border-left: 3px solid #4f86c6; padding: 1rem 1.2rem;
-  background: #151535 !important; border-radius: 0 12px 12px 0;
-  min-height: 60px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  background: rgba(21, 21, 53, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 0 12px 12px 0;
+  min-height: 60px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  border-top: 1px solid rgba(79,134,198,0.1);
+  border-right: 1px solid rgba(79,134,198,0.1);
+  border-bottom: 1px solid rgba(79,134,198,0.1);
 }
 .result-box, .result-box p, .result-box div, .result-box span,
 .result-box *, .markdown-output, .markdown-output p, .markdown-output div {
   color: #d0d8f0 !important;
 }
 .result-box code, .markdown-output code {
-  background: #1e1e50 !important; color: #c0d0f0 !important;
+  background: rgba(30, 30, 80, 0.7) !important; color: #c0d0f0 !important;
   padding: 2px 6px !important; border-radius: 4px !important;
   font-size: 0.88em !important;
 }
 .result-box pre, .markdown-output pre {
-  background: #1e1e50 !important; color: #c0d0f0 !important;
+  background: rgba(30, 30, 80, 0.7) !important; color: #c0d0f0 !important;
   padding: 12px !important; border-radius: 8px !important; border: none !important;
 }
 
-/* ── 右侧面板（模板/参考译文）固定高度 ── */
+/* ── 右侧面板 ── */
 .right-panel .result-box { max-height: 520px !important; overflow-y: auto !important; }
 
 /* ── 聊天框 ── */
 .gr-chatbot { border-radius: 12px !important; overflow: hidden !important;
-  border: 1px solid #2a2a5e !important; background: #11112a !important; }
+  border: 1px solid rgba(42, 42, 94, 0.8) !important;
+  background: rgba(17, 17, 42, 0.5) !important; }
 
 /* ── 下拉框 ── */
 .gr-dropdown { border-radius: 10px !important; overflow: hidden !important; }
@@ -121,22 +144,29 @@ button[role="tab"][aria-selected="true"] {
   transform-origin: center; }
 .star-btn:hover { transform: scale(1.35) !important; }
 
-/* ── 加载状态 ── */
-.loading-spinner { display: inline-block; animation: spin 1s linear infinite; font-size: 1.2rem; }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.status-msg { color: #6688aa !important; font-size: 0.85rem; padding: 4px 0; min-height: 1.4rem; }
-.gr-button.tool, button[size="sm"] {
-  font-size: 0.82rem !important; padding: 4px 12px !important;
-}
-
 /* ── 分割线 ── */
-hr { border-color: #2a2a5e !important; margin: 1.2rem 0 !important; }
+hr { border-color: rgba(42, 42, 94, 0.6) !important; margin: 1.2rem 0 !important; }
 
 /* ── 滚动条 ── */
 ::-webkit-scrollbar { width: 6px !important; }
 ::-webkit-scrollbar-track { background: #0f0f23 !important; }
-::-webkit-scrollbar-thumb { background: #2a2a5e !important; border-radius: 3px !important; }
+::-webkit-scrollbar-thumb { background: rgba(42, 42, 94, 0.8) !important; border-radius: 3px !important; }
 ::-webkit-scrollbar-thumb:hover { background: #4f86c6 !important; }
+
+/* ── Footer ── */
+.footer { text-align: center; color: #445577 !important; font-size: 0.78rem !important;
+  padding: 2rem 0 1rem 0 !important; border-top: 1px solid rgba(42,42,94,0.4) !important;
+  margin-top: 1.5rem !important; letter-spacing: 0.3px; }
+
+/* ── 移动端 ── */
+@media (max-width: 768px) {
+  .gradio-container { padding: 0 0.8rem !important; margin: 0.8rem auto !important; }
+  h1 { font-size: 1.4rem !important; }
+  .stat-card { min-width: 80px; padding: 10px; }
+  .stat-num { font-size: 1.1rem; }
+  button[role="tab"] { font-size: 0.78rem !important; padding: 8px 10px !important; }
+  .right-panel .result-box { max-height: 300px !important; }
+}
 """
 
 
@@ -315,6 +345,13 @@ def create_ui():
         gr.Markdown("""
         # 📖 四六级真题词典
         <div class="tagline">收录 2016~2025 年四六级真题 · 查单词 · 改作文 · 对答案 ⚡ v2.1</div>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num">21,069</div><div class="stat-label">📖 索引单词</div></div>
+          <div class="stat-card"><div class="stat-num">61</div><div class="stat-label">📝 翻译真题</div></div>
+          <div class="stat-card"><div class="stat-num">24</div><div class="stat-label">📋 真题套卷</div></div>
+          <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">📚 作文模板</div></div>
+        </div>
         """)
 
         with gr.Tabs():
@@ -536,6 +573,9 @@ def create_ui():
                             fn=next_word, inputs=[word_idx, show_def],
                             outputs=[word_idx, show_def, card_word, card_def, card_progress]
                         )
+
+        # Footer
+        gr.Markdown("""<div class="footer">📖 四六级真题词典 v2.1 · 数据收录 2016~2025 年 · 仅供学习参考</div>""")
 
     return demo
 
