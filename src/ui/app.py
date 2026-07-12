@@ -544,4 +544,14 @@ def create_ui():
 def launch(share: bool = False, port: int = 0):
     demo = create_ui()
     actual_port = port or int(os.environ.get("PORT", 7860))
+    # 预加载 RAG 索引（避免首次查词等待）
+    try:
+        from src.tools.word_lookup import get_rag
+        rag = get_rag()
+        if rag:
+            print(f"✅ RAG 索引已加载（{rag.word_count} 个词）")
+        else:
+            print("⚠️ RAG 索引未就绪")
+    except Exception as e:
+        print(f"⚠️ RAG 预加载失败: {e}")
     demo.launch(share=share, server_port=actual_port, server_name="0.0.0.0", css=CUSTOM_CSS, theme=gr.themes.Soft())

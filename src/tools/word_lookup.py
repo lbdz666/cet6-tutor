@@ -33,7 +33,7 @@ def word_lookup(word: str) -> str:
         return json.dumps({"error": "RAG 索引未加载"}, ensure_ascii=False)
 
     results = rag.query(word)
-    stats = rag.stats(word)
+    stats = rag.stats(word, results)
 
     # 提取前6个有代表性的句子
     sentences = []

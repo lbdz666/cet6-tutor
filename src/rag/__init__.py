@@ -158,10 +158,11 @@ class CETRag:
         pattern = re.compile(re.escape(word), re.IGNORECASE)
         return pattern.sub(lambda m: f"**{m.group()}**", sentence)
 
-    def stats(self, word: str) -> dict:
-        """单词统计"""
+    def stats(self, word: str, results: list[dict] = None) -> dict:
+        """单词统计。可传已有结果避免重复查询"""
         from collections import Counter
-        results = self.query(word, max_results=999)
+        if results is None:
+            results = self.query(word, max_results=50)
         if not results:
             return {"total": 0, "by_exam": {}, "by_year": {}}
         
