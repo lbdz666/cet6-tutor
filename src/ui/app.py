@@ -105,6 +105,27 @@ def create_ui():
             msg = save_word(w)
             return "⭐", w, msg
 
+    # ── 生词本刷新函数（提前定义，供星标按钮调用）──
+    def refresh_vocab():
+        words = get_words_list()
+        if not words:
+            return "📭 生词本为空，查单词时点击 ⭐ 即可收藏"
+        lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 中文释义 | 收藏时间 |", "|---|------|----------|----------|"]
+        for i, w in enumerate(words, 1):
+            defn = w.get('definition', '')[:50].replace('\n', ' ') if w.get('definition') else ''
+            lines.append(f"| {i} | **{w['word']}** | {defn} | {w.get('saved_at', '?')} |")
+        return "\n".join(lines)
+
+    def vocab_add(word):
+        if not word or not word.strip():
+            return "请输入单词", refresh_vocab()
+        return save_word(word.strip()), refresh_vocab()
+
+    def vocab_delete(word):
+        if not word or not word.strip():
+            return "请输入单词", refresh_vocab()
+        return delete_word(word.strip()), refresh_vocab()
+
     # ── 作文批改 ────────────────────────────
     def grade_essay(essay, level):
         if not essay or not essay.strip():
@@ -175,8 +196,9 @@ def create_ui():
                 # 提交查询 → 聊天 + 更新星标
                 event = msg.submit(chat_fn, [msg, chatbot], [msg, chatbot, word_label])
                 event.then(star_state, word_label, [star_btn, word_label])
-                # 点击星标 → 收藏/取消
+                # 点击星标 → 收藏/取消 + 刷新生词本
                 star_btn.click(toggle_star, [word_label, star_btn], [star_btn, word_label, star_status])
+                star_btn.click(fn=refresh_vocab, outputs=vocab_list)
                 clear_btn.click(clear_fn, None, [chatbot, msg, word_label])
 
             # ── Tab 2: 作文批改 ──
@@ -278,28 +300,6 @@ def create_ui():
                 answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
 
             # ── Tab 6: 生词本 ──
-            def refresh_vocab():
-                words = get_words_list()
-                if not words:
-                    return "📭 生词本为空，查单词时在聊天框输入「收藏 economy」即可保存"
-                lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 中文释义 | 收藏时间 |", "|---|------|----------|----------|"]
-                for i, w in enumerate(words, 1):
-                    word = w['word']
-                    defn = w.get('definition', '')[:50].replace('\n', ' ') if w.get('definition') else ''
-                    saved = w.get('saved_at', '?')
-                    lines.append(f"| {i} | **{word}** | {defn} | {saved} |")
-                return "\n".join(lines)
-
-            def vocab_add(word):
-                if not word or not word.strip():
-                    return "请输入单词", refresh_vocab()
-                return save_word(word.strip()), refresh_vocab()
-
-            def vocab_delete(word):
-                if not word or not word.strip():
-                    return "请输入单词", refresh_vocab()
-                return delete_word(word.strip()), refresh_vocab()
-
             with gr.Tab("📚 生词本"):
                 gr.Markdown("### 收藏的单词")
                 gr.Markdown("在「📖 真题词典」中查单词时，输入 **收藏 ×××** 即可保存到生词本。也可以直接在这里添加/删除。")
