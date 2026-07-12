@@ -13,3 +13,4 @@ gradio>=6.0,<7.0
 python-dotenv>=1.0
 rich>=13.0
 
+# force rebuild Sun Jul 12 18:46:45 CST 2026
