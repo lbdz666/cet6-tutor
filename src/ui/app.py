@@ -3,6 +3,7 @@ Gradio Web 界面 — 四六级真题词典（优化版 v2）
 """
 import gradio as gr
 import os
+import re
 from src.agent.core import ReActAgent
 from src.agent.tool_registry import ToolRegistry, Tool
 from src.tools.word_lookup import word_lookup, WORD_LOOKUP_TOOL
@@ -30,6 +31,8 @@ h1 { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }
 }
 button[role="tab"] { font-size: 0.95rem !important; padding: 8px 16px !important; }
 button[role="tab"][aria-selected="true"] { border-bottom: 2px solid #4f86c6 !important; }
+.star-btn { font-size: 1.6rem !important; padding: 2px 8px !important; min-width: 48px; background: transparent !important; border: none !important; cursor: pointer; transition: transform 0.2s; }
+.star-btn:hover { transform: scale(1.3); }
 """
 
 
@@ -54,15 +57,51 @@ def create_ui():
     # ── AI 问答 ─────────────────────────────
     def chat_fn(message, history):
         if not message or not message.strip():
-            return "", history
+            return "", history, ""
         response = agent.run(message)
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": response})
-        return "", history
+        # 从查询中提取单词
+        word = _extract_word(message)
+        return "", history, word
 
     def clear_fn():
         agent.reset()
-        return [], ""
+        return [], "", ""
+
+    def _extract_word(text):
+        """从用户输入中提取要查询的英文单词"""
+        text = text.strip()
+        # 模式: "查一下 X" / "查查 X" / "X 在真题" / "X 这个词"
+        for pat in [r'查(?:一下|查)?\s+([a-zA-Z]+)', r'([a-zA-Z]+)\s+(?:在真题|这个词|的意思|的用法)']:
+            m = re.search(pat, text)
+            if m:
+                return m.group(1).lower()
+        # 如果输入就是一个单词
+        words = re.findall(r'[a-zA-Z]{2,}', text)
+        if len(words) == 1:
+            return words[0].lower()
+        return ""
+
+    def star_state(word):
+        """返回星标状态: (button_text, status_text)"""
+        if not word:
+            return "☆", ""
+        words_list = get_words_list()
+        saved = any(w["word"] == word.lower() for w in words_list)
+        return ("⭐" if saved else "☆"), word
+
+    def toggle_star(word, current_star):
+        """点击星标: 收藏/取消收藏"""
+        if not word:
+            return "☆", "", ""
+        w = word.lower().strip()
+        if current_star == "⭐":
+            msg = delete_word(w)
+            return "☆", w, msg
+        else:
+            msg = save_word(w)
+            return "⭐", w, msg
 
     # ── 作文批改 ────────────────────────────
     def grade_essay(essay, level):
@@ -119,7 +158,10 @@ def create_ui():
                     label="你的问题"
                 )
                 with gr.Row() as row1:
-                    clear_btn = gr.Button("🗑️ 清空对话", size="sm")
+                    star_btn = gr.Button("☆", size="sm", scale=0.3, elem_classes="star-btn")
+                    word_label = gr.Markdown("", scale=1)
+                    star_status = gr.Markdown("", visible=False)
+                    clear_btn = gr.Button("🗑️ 清空对话", size="sm", scale=0.3)
                 gr.Examples(
                     examples=[
                         "查一下 decline 在真题中的用法",
@@ -128,8 +170,12 @@ def create_ui():
                     ],
                     inputs=msg, label="💡 试试这些"
                 )
-                msg.submit(chat_fn, [msg, chatbot], [msg, chatbot])
-                clear_btn.click(clear_fn, None, [chatbot, msg])
+                # 提交查询 → 聊天 + 更新星标
+                event = msg.submit(chat_fn, [msg, chatbot], [msg, chatbot, word_label])
+                event.then(star_state, word_label, [star_btn, word_label])
+                # 点击星标 → 收藏/取消
+                star_btn.click(toggle_star, [word_label, star_btn], [star_btn, word_label, star_status])
+                clear_btn.click(clear_fn, None, [chatbot, msg, word_label])
 
             # ── Tab 2: 作文批改 ──
             with gr.Tab("✍️ 作文批改"):
