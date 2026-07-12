@@ -18,37 +18,122 @@ from src.tools.answer_lookup import format_exam_answers, list_available_exams, A
 
 # ── 全局 CSS ─────────────────────────────
 CUSTOM_CSS = """
-.gradio-container { max-width: 1200px !important; margin: 2rem auto !important; padding: 0 1.5rem !important; }
-body { background: #1a1a2e !important; margin: 0 !important; }
-h1 { font-size: 2rem !important; margin-bottom: 0.3rem !important; }
-.tagline { color: #aaa !important; font-size: 1rem; margin-bottom: 1.5rem; }
-/* 让所有输入框、下拉框、按钮占满宽度 */
-.gr-box, .gr-form, input, select { width: 100% !important; }
-/* 只调短翻译输入框的高度，作文输入框保持 */
-textarea { width: 100% !important; }
-/* 行内间距 */
-.gr-row { gap: 0.8rem !important; }
-/* 右边模板面板固定高度，超出滚动 */
-.right-panel .result-box { max-height: 520px !important; overflow-y: auto !important; }
+/* ── 基础布局 ── */
+body { background: #0f0f23 !important; margin: 0 !important; }
+.gradio-container {
+  max-width: 1200px !important; margin: 1.5rem auto !important;
+  padding: 0 1.5rem !important;
+  background: transparent !important;
+}
+h1 { font-size: 2rem !important; margin-bottom: 0.2rem !important;
+  background: linear-gradient(135deg, #e8e8ff 0%, #4f86c6 100%);
+  -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important;
+  display: inline-block; }
+.tagline { color: #8899bb !important; font-size: 0.95rem; margin-bottom: 1.5rem; letter-spacing: 0.3px; }
+
+/* ── 输入框 ── */
+textarea, input[type="text"], input[type="search"], .gr-dropdown select {
+  background: #1a1a3e !important; border: 1px solid #2a2a5e !important;
+  border-radius: 10px !important; color: #e0e0f0 !important;
+  padding: 10px 14px !important; transition: all 0.25s ease !important;
+  font-size: 0.95rem !important;
+}
+textarea:focus, input[type="text"]:focus {
+  border-color: #4f86c6 !important; box-shadow: 0 0 0 3px rgba(79,134,198,0.15) !important;
+  outline: none !important;
+}
+
+/* ── 按钮 ── */
+button, .gr-button {
+  border-radius: 10px !important; border: none !important;
+  font-weight: 600 !important; letter-spacing: 0.3px !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer !important; position: relative !important; overflow: hidden !important;
+}
+button:active { transform: scale(0.96) !important; }
+button:hover { filter: brightness(1.15) !important; }
+button[variant="primary"], .lg.svelte-1l7lw7j {
+  background: linear-gradient(135deg, #4f86c6 0%, #3a6fa5 100%) !important;
+  color: white !important; box-shadow: 0 4px 15px rgba(79,134,198,0.3) !important;
+}
+button[variant="primary"]:hover {
+  box-shadow: 0 6px 25px rgba(79,134,198,0.45) !important;
+  transform: translateY(-1px) !important;
+}
+button:not([variant]):not(.star-btn) {
+  background: #1e1e48 !important; color: #b0b8d0 !important;
+  border: 1px solid #2a2a5e !important;
+}
+button:not([variant]):not(.star-btn):hover {
+  background: #2a2a5e !important; color: #e0e0f0 !important;
+  border-color: #4f86c6 !important;
+}
+
+/* ── 标签页 ── */
+.tabs { gap: 0 !important; }
+button[role="tab"] {
+  font-size: 0.9rem !important; padding: 10px 18px !important;
+  background: transparent !important; color: #8899bb !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important; transition: all 0.25s ease !important;
+  margin: 0 1px !important;
+}
+button[role="tab"]:hover { color: #c0d0f0 !important; background: rgba(79,134,198,0.08) !important; }
+button[role="tab"][aria-selected="true"] {
+  color: #4f86c6 !important; border-bottom: 2px solid #4f86c6 !important;
+  background: rgba(79,134,198,0.1) !important;
+}
+
+/* ── 结果卡片 ── */
 .result-box {
-    border-left: 4px solid #4f86c6; padding: 0.8rem 1rem;
-    background: #16213e !important; border-radius: 0 8px 8px 0;
-    min-height: 80px;
+  border-left: 3px solid #4f86c6; padding: 1rem 1.2rem;
+  background: #151535 !important; border-radius: 0 12px 12px 0;
+  min-height: 60px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
 .result-box, .result-box p, .result-box div, .result-box span,
 .result-box *, .markdown-output, .markdown-output p, .markdown-output div {
-    color: #e0e0e0 !important;
+  color: #d0d8f0 !important;
 }
 .result-box code, .markdown-output code {
-    background: #0f3460 !important; color: #e0e0e0 !important; padding: 1px 5px !important; border-radius: 3px !important; font-size: 0.9em !important;
+  background: #1e1e50 !important; color: #c0d0f0 !important;
+  padding: 2px 6px !important; border-radius: 4px !important;
+  font-size: 0.88em !important;
 }
 .result-box pre, .markdown-output pre {
-    background: #0f3460 !important; color: #e0e0e0 !important; padding: 10px !important; border-radius: 5px !important; border: none !important;
+  background: #1e1e50 !important; color: #c0d0f0 !important;
+  padding: 12px !important; border-radius: 8px !important; border: none !important;
 }
-button[role="tab"] { font-size: 0.95rem !important; padding: 8px 16px !important; }
-button[role="tab"][aria-selected="true"] { border-bottom: 2px solid #4f86c6 !important; }
-.star-btn { font-size: 1.6rem !important; padding: 2px 8px !important; min-width: 48px; background: transparent !important; border: none !important; cursor: pointer; transition: transform 0.2s; }
-.star-btn:hover { transform: scale(1.3); }
+
+/* ── 右侧面板（模板/参考译文）固定高度 ── */
+.right-panel .result-box { max-height: 520px !important; overflow-y: auto !important; }
+
+/* ── 聊天框 ── */
+.gr-chatbot { border-radius: 12px !important; overflow: hidden !important;
+  border: 1px solid #2a2a5e !important; background: #11112a !important; }
+
+/* ── 下拉框 ── */
+.gr-dropdown { border-radius: 10px !important; overflow: hidden !important; }
+
+/* ── 星标按钮 ── */
+.star-btn { font-size: 1.6rem !important; padding: 2px 8px !important;
+  min-width: 48px; background: transparent !important; border: none !important;
+  cursor: pointer; transition: transform 0.2s ease !important;
+  transform-origin: center; }
+.star-btn:hover { transform: scale(1.35) !important; }
+
+/* ── 例子按钮 ── */
+.gr-button.tool, button[size="sm"] {
+  font-size: 0.82rem !important; padding: 4px 12px !important;
+}
+
+/* ── 分割线 ── */
+hr { border-color: #2a2a5e !important; margin: 1.2rem 0 !important; }
+
+/* ── 滚动条 ── */
+::-webkit-scrollbar { width: 6px !important; }
+::-webkit-scrollbar-track { background: #0f0f23 !important; }
+::-webkit-scrollbar-thumb { background: #2a2a5e !important; border-radius: 3px !important; }
+::-webkit-scrollbar-thumb:hover { background: #4f86c6 !important; }
 """
 
 
