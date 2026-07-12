@@ -210,7 +210,7 @@ def create_ui():
                 clear_btn.click(clear_fn, None, [chatbot, msg, word_label])
 
             # ── Tab 2: 作文批改 ──
-            with gr.Tab("✍️ 作文批改"):
+            with gr.Tab("✍️ 作文"):
                 gr.Markdown("### 把你的作文贴进来，一键批改")
                 gr.Markdown("按四六级官方评分标准（满分15分），自动评分并给出建议。")
                 with gr.Row():
