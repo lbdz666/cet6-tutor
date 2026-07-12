@@ -181,10 +181,10 @@ def create_ui():
                     label="你的问题"
                 )
                 with gr.Row() as row1:
-                    star_btn = gr.Button("☆", size="sm", scale=0.3, elem_classes="star-btn")
-                    word_label = gr.Markdown("", scale=1)
+                    star_btn = gr.Button("☆", size="sm", scale=1, elem_classes="star-btn")
+                    word_label = gr.Markdown("", scale=2)
                     star_status = gr.Markdown("", visible=False)
-                    clear_btn = gr.Button("🗑️ 清空对话", size="sm", scale=0.3)
+                    clear_btn = gr.Button("🗑️ 清空对话", size="sm", scale=1)
                 gr.Examples(
                     examples=[
                         "查一下 decline 在真题中的用法",
@@ -196,9 +196,8 @@ def create_ui():
                 # 提交查询 → 聊天 + 更新星标
                 event = msg.submit(chat_fn, [msg, chatbot], [msg, chatbot, word_label])
                 event.then(star_state, word_label, [star_btn, word_label])
-                # 点击星标 → 收藏/取消 + 刷新生词本
+                # 点击星标 → 收藏/取消
                 star_btn.click(toggle_star, [word_label, star_btn], [star_btn, word_label, star_status])
-                star_btn.click(fn=refresh_vocab, outputs=vocab_list)
                 clear_btn.click(clear_fn, None, [chatbot, msg, word_label])
 
             # ── Tab 2: 作文批改 ──
@@ -300,15 +299,17 @@ def create_ui():
                 answer_section_dd.input(lookup_answers_dd, [answer_exam_dd, answer_section_dd], answer_output)
 
             # ── Tab 6: 生词本 ──
-            with gr.Tab("📚 生词本"):
+            with gr.Tab("📚 生词本") as vocab_tab:
                 gr.Markdown("### 收藏的单词")
-                gr.Markdown("在「📖 真题词典」中查单词时，输入 **收藏 ×××** 即可保存到生词本。也可以直接在这里添加/删除。")
+                gr.Markdown("在「📖 真题词典」中查单词时，点击 ⭐ 收藏。也可以直接在这里添加/删除。")
                 with gr.Row():
                     vocab_input = gr.Textbox(label="单词", placeholder="输入单词，如 economy", scale=4)
                     vocab_add_btn = gr.Button("➕ 收藏", variant="primary", scale=1)
                     vocab_del_btn = gr.Button("🗑️ 删除", scale=1)
                 vocab_status = gr.Markdown("")
                 vocab_list = gr.Markdown(refresh_vocab())
+                # 切换到本标签页时自动刷新列表
+                vocab_tab.select(refresh_vocab, None, vocab_list)
                 vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_list])
                 vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_list])
                 vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_list])
