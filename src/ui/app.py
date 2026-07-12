@@ -22,6 +22,14 @@ CUSTOM_CSS = """
 body { background: #1a1a2e !important; margin: 0 !important; }
 h1 { font-size: 2rem !important; margin-bottom: 0.3rem !important; }
 .tagline { color: #aaa !important; font-size: 1rem; margin-bottom: 1.5rem; }
+/* 让所有输入框、下拉框、按钮占满宽度 */
+.gr-box, .gr-form, input, select { width: 100% !important; }
+/* 只调短翻译输入框的高度，作文输入框保持 */
+textarea { width: 100% !important; }
+/* 行内间距 */
+.gr-row { gap: 0.8rem !important; }
+/* 隐藏 Gradio 的冗余 footer */
+footer { display: none !important; }
 .result-box {
     border-left: 4px solid #4f86c6; padding: 0.8rem 1rem;
     background: #16213e !important; border-radius: 0 8px 8px 0;
