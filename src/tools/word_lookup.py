@@ -33,6 +33,17 @@ def word_lookup(word: str) -> str:
         return json.dumps({"error": "RAG 索引未加载"}, ensure_ascii=False)
 
     results = rag.query(word)
+
+    # 没查到 → 返回友好提示
+    if not results:
+        return json.dumps({
+            "word": word,
+            "total": 0,
+            "sentences": [],
+            "not_found": True,
+            "message": f"😅 没找到「{word}」，试试其他拼写？\n\n我们收录了 21,069 个真题词汇，可能是这个词没在四六级真题中出现过。"
+        }, ensure_ascii=False)
+
     stats = rag.stats(word, results)
 
     # 提取前6个有代表性的句子

@@ -215,6 +215,11 @@ def create_ui():
                         data = json.loads(result)
                         if "error" in data:
                             response = f"❌ {data['error']}"
+                        elif data.get("not_found"):
+                            response = data.get("message", f"😅 没找到「{word}」")
+                            history.append({"role": "user", "content": message})
+                            history.append({"role": "assistant", "content": response})
+                            return "", history, ""  # 空 word → 隐藏星标按钮
                         else:
                             response = f"## 📖 {word}\n\n"
                             sentences = data.get("sentences", [])
