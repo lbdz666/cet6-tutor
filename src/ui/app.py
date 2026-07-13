@@ -289,14 +289,15 @@ def create_ui():
 
     # ── 生词本刷新函数（提前定义，供星标按钮调用）──
     def refresh_vocab():
+        """返回 DataFrame 格式的生词本数据"""
         words = get_words_list()
         if not words:
-            return "📭 生词本为空，查单词时点击 ⭐ 即可收藏"
-        lines = ["## 📚 我的生词本", "", f"共 {len(words)} 个单词", "", "| # | 单词 | 中文释义 | 收藏时间 |", "|---|------|----------|----------|"]
+            return [["—", "📭 生词本为空", "查单词时点击 ⭐ 收藏", "—"]]
+        rows = []
         for i, w in enumerate(words, 1):
-            defn = w.get('definition', '')[:50].replace('\n', ' ') if w.get('definition') else ''
-            lines.append(f"| {i} | **{w['word']}** | {defn} | {w.get('saved_at', '?')} |")
-        return "\n".join(lines)
+            defn = w.get('definition', '').split('\n')[0][:60] if w.get('definition') else '—'
+            rows.append([i, w['word'], defn, w.get('saved_at', '?')])
+        return rows
 
     def vocab_add(word):
         if not word or not word.strip():
@@ -508,6 +509,22 @@ def create_ui():
 
             # ── Tab 5: 生词本（列表 + 复习左右分栏）──
             with gr.Tab("📚 生词本") as vocab_tab:
+                # 闪卡状态（需先定义，供两侧引用）
+                word_idx = gr.State(0)
+                show_def = gr.State(False)
+                card_word = gr.Markdown("## **✨**")
+                card_def = gr.Markdown("*收藏单词后开始复习*", elem_classes="result-box")
+                card_progress = gr.Markdown("")
+
+                # 点击单词列表行 → 跳转到闪卡
+                def on_vocab_select(evt: gr.SelectData):
+                    words = get_words_list()
+                    row = evt.index[0]
+                    if not words or row >= len(words):
+                        return 0, False, "## **✨**", "*收藏单词后开始复习*", ""
+                    w = words[row]
+                    return row, False, f"## **{w['word']}**", "点击「显示释义」查看", f"{row+1}/{len(words)}"
+
                 with gr.Row(equal_height=False):
                     with gr.Column(scale=6):
                         gr.Markdown("### 📋 单词列表")
@@ -517,16 +534,27 @@ def create_ui():
                             vocab_add_btn = gr.Button("➕ 收藏", variant="primary", scale=1)
                             vocab_del_btn = gr.Button("🗑️ 删除", scale=1)
                         vocab_status = gr.Markdown("")
-                        vocab_list = gr.Markdown(refresh_vocab())
-                        vocab_tab.select(refresh_vocab, None, vocab_list)
-                        vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_list])
-                        vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_list])
-                        vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_list])
+                        gr.Markdown("##### 点击任意单词 → 右侧闪卡查看详情")
+                        vocab_df = gr.Dataframe(
+                            value=refresh_vocab(),
+                            headers=["#", "单词", "中文释义", "收藏时间"],
+                            interactive=False,
+                            wrap=False,
+                            row_count=12,
+                            col_count=(4, "fixed"),
+                        )
+                        vocab_tab.select(refresh_vocab, None, vocab_df)
+                        vocab_add_btn.click(vocab_add, vocab_input, [vocab_status, vocab_df])
+                        vocab_del_btn.click(vocab_delete, vocab_input, [vocab_status, vocab_df])
+                        vocab_input.submit(vocab_add, vocab_input, [vocab_status, vocab_df])
+                        # 点击行 → 加载到闪卡
+                        vocab_df.select(
+                            fn=on_vocab_select,
+                            outputs=[word_idx, show_def, card_word, card_def, card_progress]
+                        )
 
                     with gr.Column(scale=6, elem_classes="right-panel"):
                         gr.Markdown("### 🔄 闪卡复习")
-                        word_idx = gr.State(0)
-                        show_def = gr.State(False)
 
                         def get_card(idx, show):
                             words = get_words_list()
@@ -551,6 +579,14 @@ def create_ui():
                             prog = f"{nxt+1}/{len(words)}"
                             return nxt, False, word_text, "点击「显示释义」查看", prog
 
+                        def prev_word(idx, show):
+                            words = get_words_list()
+                            if not words:
+                                return 0, False, "📭", "", ""
+                            prv = (idx - 1) % len(words) if idx > 0 else len(words) - 1
+                            w = words[prv]
+                            return prv, False, f"## **{w['word']}**", "点击「显示释义」查看", f"{prv+1}/{len(words)}"
+
                         def reveal_def(idx):
                             words = get_words_list()
                             if not words or idx >= len(words):
@@ -558,12 +594,8 @@ def create_ui():
                             w = words[idx]
                             return w.get('definition', '暂无释义').replace('\n', '  \n')
 
-                        card_word = gr.Markdown("## **✨**")
-                        card_def = gr.Markdown("*收藏单词后开始复习*", elem_classes="result-box")
-                        card_progress = gr.Markdown("")
-
-                        gr.Markdown("")
                         with gr.Row():
+                            prev_btn = gr.Button("◀ 上一个", size="lg")
                             show_btn = gr.Button("👁️ 显示释义", variant="primary", size="lg")
                             next_btn = gr.Button("⏭️ 下一个", size="lg")
                         # 初始化
@@ -576,6 +608,10 @@ def create_ui():
                         )
                         next_btn.click(
                             fn=next_word, inputs=[word_idx, show_def],
+                            outputs=[word_idx, show_def, card_word, card_def, card_progress]
+                        )
+                        prev_btn.click(
+                            fn=prev_word, inputs=[word_idx, show_def],
                             outputs=[word_idx, show_def, card_word, card_def, card_progress]
                         )
 
